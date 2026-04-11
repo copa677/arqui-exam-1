@@ -1,0 +1,69 @@
+<?php
+
+namespace App\Controllers;
+
+use App\Models\Usuario;
+
+class UsuarioController {
+    public function index() {
+        echo Usuario::where('activo', true)->with('rol')->get()->toJson();
+    }
+
+    public function show($id) {
+        $usuario = Usuario::where('id', $id)->where('activo', true)->with('rol')->first();
+        if (!$usuario) {
+            http_response_code(404);
+            echo json_encode(['error' => 'Usuario no encontrado o inactivo']);
+            return;
+        }
+        echo $usuario->toJson();
+    }
+
+    public function store() {
+        $input = file_get_contents('php://input');
+        $data = json_decode($input, true);
+
+        if (is_null($data)) {
+            http_response_code(400);
+            echo json_encode(['error' => 'Cuerpo JSON inválido o vacío']);
+            return;
+        }
+
+        try {
+            $data['activo'] = true;
+            $usuario = Usuario::create($data);
+            http_response_code(201);
+            echo $usuario->toJson();
+        } catch (\Exception $e) {
+            http_response_code(400);
+            echo json_encode(['error' => 'Error al crear usuario: ' . $e->getMessage()]);
+        }
+    }
+
+    public function update($id) {
+        $data = json_decode(file_get_contents('php://input'), true);
+        $usuario = Usuario::where('id', $id)->where('activo', true)->first();
+        if (!$usuario) {
+            http_response_code(404);
+            echo json_encode(['error' => 'Usuario no encontrado o inactivo']);
+            return;
+        }
+        $usuario->update($data);
+        echo $usuario->toJson();
+    }
+
+    public function destroy($id) {
+        $usuario = Usuario::where('id', $id)->where('activo', true)->first();
+        if (!$usuario) {
+            http_response_code(404);
+            echo json_encode(['error' => 'Usuario no encontrado o inactivo']);
+            return;
+        }
+        
+        // Eliminación Lógica Manual
+        $usuario->activo = false;
+        $usuario->save();
+        
+        echo json_encode(['message' => 'Usuario desactivado exitosamente (eliminación lógica)']);
+    }
+}

@@ -1,0 +1,150 @@
+.problems-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 24px;
+  margin-top: 24px;
+}
+
+.assignment-card {
+  padding: 0;
+  transition: all 0.3s ease;
+  position: relative;
+  min-height: 200px;
+}
+
+.assignment-card.active {
+  transform: scale(1.02);
+  border-color: var(--primary);
+  box-shadow: 0 10px 40px rgba(99, 102, 241, 0.2);
+}
+
+.assignment-content {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.assignment-to.page-header {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 24px;
+  margin-bottom: 40px;
+}
+
+.priority-tag {
+  font-size: 0.7rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  padding: 4px 10px;
+  border-radius: 4px;
+}
+
+.priority-tag.alta { background: rgba(239, 68, 68, 0.1); color: var(--danger); }
+.priority-tag.media { background: rgba(245, 158, 11, 0.1); color: var(--warning); }
+.priority-tag.baja { background: rgba(16, 185, 129, 0.1); color: var(--success); }
+
+.type-label {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+.assignment-card h3 {
+  margin: 0 0 10px 0;
+  font-size: 1.125rem;
+}
+
+.problem-location {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  margin-bottom: 24px;
+}
+
+.assign-btn {
+  margin-top: auto;
+  background: var(--primary);
+  color: white;
+  padding: 10px;
+  border-radius: 8px;
+  font-weight: 600;
+  transition: all 0.2s;
+}
+
+.assign-btn:hover {
+  background: var(--primary-glow);
+  transform: translateY(-2px);
+}
+
+.technician-selector {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.technician-selector h4 {
+  font-size: 0.8125rem;
+  color: var(--text-muted);
+  margin-bottom: 8px;
+  text-transform: uppercase;
+}
+
+.tech-option {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--glass-border);
+  border-radius: 8px;
+  transition: all 0.2s;
+  text-align: left;
+}
+
+.tech-option:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: var(--primary);
+}
+
+.tech-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.tech-name {
+  font-size: 0.875rem;
+  font-weight: 700;
+}
+
+.tech-desc {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.cancel-btn {
+  margin-top: 8px;
+  font-size: 0.8125rem;
+  color: var(--text-muted);
+  text-decoration: underline;
+}
+
+.fade-in {
+  animation: fadeIn 0.3s ease-in;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.success-overlay {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  color: var(--success);
+  font-weight: 700;
+  height: 100%;
+}
