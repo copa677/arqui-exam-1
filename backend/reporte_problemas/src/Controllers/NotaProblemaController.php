@@ -5,11 +5,11 @@ namespace App\Controllers;
 use App\Models\NotaProblema;
 
 class NotaProblemaController {
-    public function index() {
+    public function getNotasProblema() {
         echo NotaProblema::where('activo', true)->with('reportador', 'detalles')->get()->toJson();
     }
 
-    public function show($id) {
+    public function getNotaProblema($id) {
         $nota = NotaProblema::where('id', $id)->where('activo', true)->with('reportador', 'detalles')->first();
         if (!$nota) {
             http_response_code(404);
@@ -19,7 +19,7 @@ class NotaProblemaController {
         echo $nota->toJson();
     }
 
-    public function store() {
+    public function createNotaProblema() {
         $data = json_decode(file_get_contents('php://input'), true);
         try {
             $data['activo'] = true;
@@ -33,7 +33,7 @@ class NotaProblemaController {
         }
     }
 
-    public function update($id) {
+    public function updateNotaProblema($id) {
         $data = json_decode(file_get_contents('php://input'), true);
         $nota = NotaProblema::where('id', $id)->where('activo', true)->first();
         if (!$nota) {
@@ -45,7 +45,7 @@ class NotaProblemaController {
         echo $nota->toJson();
     }
 
-    public function destroy($id) {
+    public function deleteNotaProblema($id) {
         $nota = NotaProblema::where('id', $id)->where('activo', true)->first();
         if (!$nota) {
             http_response_code(404);

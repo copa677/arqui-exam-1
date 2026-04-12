@@ -23,24 +23,24 @@ Database::boot();
 
 $dispatcher = FastRoute\simpleDispatcher(function(FastRoute\RouteCollector $r) {
     // Asignaciones
-    $r->addRoute('GET', '/asignaciones', [AsignacionController::class, 'index']);
-    $r->addRoute('GET', '/asignaciones/{id:\d+}', [AsignacionController::class, 'show']);
-    $r->addRoute('POST', '/asignaciones', [AsignacionController::class, 'store']);
+    $r->addRoute('GET', '/asignaciones', [AsignacionController::class, 'getAsignaciones']);
+    $r->addRoute('GET', '/asignaciones/{id:\d+}', [AsignacionController::class, 'getAsignacion']);
+    $r->addRoute('POST', '/asignaciones', [AsignacionController::class, 'createAsignacion']);
     // No hay rutas de Update/Delete según requerimientos
 
     // Historial de Estados
-    $r->addRoute('GET', '/historial', [HistorialEstadoController::class, 'index']);
-    $r->addRoute('GET', '/historial/{id:\d+}', [HistorialEstadoController::class, 'show']);
-    $r->addRoute('POST', '/historial', [HistorialEstadoController::class, 'store']);
-    $r->addRoute('PUT', '/historial/{id:\d+}', [HistorialEstadoController::class, 'update']);
-    $r->addRoute('DELETE', '/historial/{id:\d+}', [HistorialEstadoController::class, 'destroy']);
+    $r->addRoute('GET', '/historial', [HistorialEstadoController::class, 'getHistoriales']);
+    $r->addRoute('GET', '/historial/{id:\d+}', [HistorialEstadoController::class, 'getHistorial']);
+    $r->addRoute('POST', '/historial', [HistorialEstadoController::class, 'createHistorial']);
+    $r->addRoute('PUT', '/historial/{id:\d+}', [HistorialEstadoController::class, 'updateHistorial']);
+    $r->addRoute('DELETE', '/historial/{id:\d+}', [HistorialEstadoController::class, 'deleteHistorial']);
 
     // Evidencias
-    $r->addRoute('GET', '/evidencias', [EvidenciaController::class, 'index']);
-    $r->addRoute('GET', '/evidencias/{id:\d+}', [EvidenciaController::class, 'show']);
-    $r->addRoute('POST', '/evidencias', [EvidenciaController::class, 'store']);
-    $r->addRoute('PUT', '/evidencias/{id:\d+}', [EvidenciaController::class, 'update']);
-    $r->addRoute('DELETE', '/evidencias/{id:\d+}', [EvidenciaController::class, 'destroy']);
+    $r->addRoute('GET', '/evidencias', [EvidenciaController::class, 'getEvidencias']);
+    $r->addRoute('GET', '/evidencias/{id:\d+}', [EvidenciaController::class, 'getEvidencia']);
+    $r->addRoute('POST', '/evidencias', [EvidenciaController::class, 'createEvidencia']);
+    $r->addRoute('PUT', '/evidencias/{id:\d+}', [EvidenciaController::class, 'updateEvidencia']);
+    $r->addRoute('DELETE', '/evidencias/{id:\d+}', [EvidenciaController::class, 'deleteEvidencia']);
 });
 
 $httpMethod = $_SERVER['REQUEST_METHOD'];

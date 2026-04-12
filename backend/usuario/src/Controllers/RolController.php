@@ -5,11 +5,11 @@ namespace App\Controllers;
 use App\Models\Rol;
 
 class RolController {
-    public function index() {
+    public function getRoles() {
         echo Rol::where('activo', true)->get()->toJson();
     }
 
-    public function show($id) {
+    public function getRol($id) {
         $rol = Rol::where('id', $id)->where('activo', true)->first();
         if (!$rol) {
             http_response_code(404);
@@ -19,7 +19,7 @@ class RolController {
         echo $rol->toJson();
     }
 
-    public function store() {
+    public function createRol() {
         $data = json_decode(file_get_contents('php://input'), true);
         try {
             $data['activo'] = true;
@@ -32,7 +32,7 @@ class RolController {
         }
     }
 
-    public function update($id) {
+    public function updateRol($id) {
         $data = json_decode(file_get_contents('php://input'), true);
         $rol = Rol::where('id', $id)->where('activo', true)->first();
         if (!$rol) {
@@ -44,7 +44,7 @@ class RolController {
         echo $rol->toJson();
     }
 
-    public function destroy($id) {
+    public function deleteRol($id) {
         $rol = Rol::where('id', $id)->where('activo', true)->first();
         if (!$rol) {
             http_response_code(404);

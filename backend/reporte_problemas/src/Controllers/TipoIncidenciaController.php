@@ -5,11 +5,11 @@ namespace App\Controllers;
 use App\Models\TipoIncidencia;
 
 class TipoIncidenciaController {
-    public function index() {
+    public function getTiposIncidencia() {
         echo TipoIncidencia::where('activo', true)->get()->toJson();
     }
 
-    public function show($id) {
+    public function getTipoIncidencia($id) {
         $tipo = TipoIncidencia::where('id', $id)->where('activo', true)->first();
         if (!$tipo) {
             http_response_code(404);
@@ -19,7 +19,7 @@ class TipoIncidenciaController {
         echo $tipo->toJson();
     }
 
-    public function store() {
+    public function createTipoIncidencia() {
         $data = json_decode(file_get_contents('php://input'), true);
         try {
             $data['activo'] = true;
@@ -32,7 +32,7 @@ class TipoIncidenciaController {
         }
     }
 
-    public function update($id) {
+    public function updateTipoIncidencia($id) {
         $data = json_decode(file_get_contents('php://input'), true);
         $tipo = TipoIncidencia::where('id', $id)->where('activo', true)->first();
         if (!$tipo) {
@@ -44,7 +44,7 @@ class TipoIncidenciaController {
         echo $tipo->toJson();
     }
 
-    public function destroy($id) {
+    public function deleteTipoIncidencia($id) {
         $tipo = TipoIncidencia::where('id', $id)->where('activo', true)->first();
         if (!$tipo) {
             http_response_code(404);

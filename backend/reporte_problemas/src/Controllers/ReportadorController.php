@@ -5,11 +5,11 @@ namespace App\Controllers;
 use App\Models\Reportador;
 
 class ReportadorController {
-    public function index() {
+    public function getReportadores() {
         echo Reportador::where('activo', true)->get()->toJson();
     }
 
-    public function show($id) {
+    public function getReportador($id) {
         $reportador = Reportador::where('id', $id)->where('activo', true)->first();
         if (!$reportador) {
             http_response_code(404);
@@ -19,7 +19,7 @@ class ReportadorController {
         echo $reportador->toJson();
     }
 
-    public function store() {
+    public function createReportador() {
         $data = json_decode(file_get_contents('php://input'), true);
         try {
             $data['activo'] = true;
@@ -32,7 +32,7 @@ class ReportadorController {
         }
     }
 
-    public function update($id) {
+    public function updateReportador($id) {
         $data = json_decode(file_get_contents('php://input'), true);
         $reportador = Reportador::where('id', $id)->where('activo', true)->first();
         if (!$reportador) {
@@ -44,7 +44,7 @@ class ReportadorController {
         echo $reportador->toJson();
     }
 
-    public function destroy($id) {
+    public function deleteReportador($id) {
         $reportador = Reportador::where('id', $id)->where('activo', true)->first();
         if (!$reportador) {
             http_response_code(404);

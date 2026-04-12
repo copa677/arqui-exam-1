@@ -5,11 +5,11 @@ namespace App\Controllers;
 use App\Models\Facultad;
 
 class FacultadController {
-    public function index() {
+    public function getFacultades() {
         echo Facultad::where('activo', true)->with('modulos')->get()->toJson();
     }
 
-    public function show($id) {
+    public function getFacultad($id) {
         $facultad = Facultad::where('id', $id)->where('activo', true)->with('modulos')->first();
         if (!$facultad) {
             http_response_code(404);
@@ -19,7 +19,7 @@ class FacultadController {
         echo $facultad->toJson();
     }
 
-    public function store() {
+    public function createFacultad() {
         $data = json_decode(file_get_contents('php://input'), true);
         try {
             $data['activo'] = true;
@@ -32,7 +32,7 @@ class FacultadController {
         }
     }
 
-    public function update($id) {
+    public function updateFacultad($id) {
         $data = json_decode(file_get_contents('php://input'), true);
         $facultad = Facultad::where('id', $id)->where('activo', true)->first();
         if (!$facultad) {
@@ -44,7 +44,7 @@ class FacultadController {
         echo $facultad->toJson();
     }
 
-    public function destroy($id) {
+    public function deleteFacultad($id) {
         $facultad = Facultad::where('id', $id)->where('activo', true)->first();
         if (!$facultad) {
             http_response_code(404);

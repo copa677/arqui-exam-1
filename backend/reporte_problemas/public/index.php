@@ -24,32 +24,32 @@ Database::boot();
 
 $dispatcher = FastRoute\simpleDispatcher(function(FastRoute\RouteCollector $r) {
     // Reportadores
-    $r->addRoute('GET', '/reportadores', [ReportadorController::class, 'index']);
-    $r->addRoute('GET', '/reportadores/{id:\d+}', [ReportadorController::class, 'show']);
-    $r->addRoute('POST', '/reportadores', [ReportadorController::class, 'store']);
-    $r->addRoute('PUT', '/reportadores/{id:\d+}', [ReportadorController::class, 'update']);
-    $r->addRoute('DELETE', '/reportadores/{id:\d+}', [ReportadorController::class, 'destroy']);
+    $r->addRoute('GET', '/reportadores', [ReportadorController::class, 'getReportadores']);
+    $r->addRoute('GET', '/reportadores/{id:\d+}', [ReportadorController::class, 'getReportador']);
+    $r->addRoute('POST', '/reportadores', [ReportadorController::class, 'createReportador']);
+    $r->addRoute('PUT', '/reportadores/{id:\d+}', [ReportadorController::class, 'updateReportador']);
+    $r->addRoute('DELETE', '/reportadores/{id:\d+}', [ReportadorController::class, 'deleteReportador']);
 
     // Tipos de Incidencia
-    $r->addRoute('GET', '/tipos-incidencia', [TipoIncidenciaController::class, 'index']);
-    $r->addRoute('GET', '/tipos-incidencia/{id:\d+}', [TipoIncidenciaController::class, 'show']);
-    $r->addRoute('POST', '/tipos-incidencia', [TipoIncidenciaController::class, 'store']);
-    $r->addRoute('PUT', '/tipos-incidencia/{id:\d+}', [TipoIncidenciaController::class, 'update']);
-    $r->addRoute('DELETE', '/tipos-incidencia/{id:\d+}', [TipoIncidenciaController::class, 'destroy']);
+    $r->addRoute('GET', '/tipos-incidencia', [TipoIncidenciaController::class, 'getTiposIncidencia']);
+    $r->addRoute('GET', '/tipos-incidencia/{id:\d+}', [TipoIncidenciaController::class, 'getTipoIncidencia']);
+    $r->addRoute('POST', '/tipos-incidencia', [TipoIncidenciaController::class, 'createTipoIncidencia']);
+    $r->addRoute('PUT', '/tipos-incidencia/{id:\d+}', [TipoIncidenciaController::class, 'updateTipoIncidencia']);
+    $r->addRoute('DELETE', '/tipos-incidencia/{id:\d+}', [TipoIncidenciaController::class, 'deleteTipoIncidencia']);
 
     // Notas de Problemas
-    $r->addRoute('GET', '/notas', [NotaProblemaController::class, 'index']);
-    $r->addRoute('GET', '/notas/{id:\d+}', [NotaProblemaController::class, 'show']);
-    $r->addRoute('POST', '/notas', [NotaProblemaController::class, 'store']);
-    $r->addRoute('PUT', '/notas/{id:\d+}', [NotaProblemaController::class, 'update']);
-    $r->addRoute('DELETE', '/notas/{id:\d+}', [NotaProblemaController::class, 'destroy']);
+    $r->addRoute('GET', '/notas', [NotaProblemaController::class, 'getNotasProblema']);
+    $r->addRoute('GET', '/notas/{id:\d+}', [NotaProblemaController::class, 'getNotaProblema']);
+    $r->addRoute('POST', '/notas', [NotaProblemaController::class, 'createNotaProblema']);
+    $r->addRoute('PUT', '/notas/{id:\d+}', [NotaProblemaController::class, 'updateNotaProblema']);
+    $r->addRoute('DELETE', '/notas/{id:\d+}', [NotaProblemaController::class, 'deleteNotaProblema']);
 
     // Detalles de Problemas
-    $r->addRoute('GET', '/detalles', [DetalleProblemaController::class, 'index']);
-    $r->addRoute('GET', '/detalles/{id:\d+}', [DetalleProblemaController::class, 'show']);
-    $r->addRoute('POST', '/detalles', [DetalleProblemaController::class, 'store']);
-    $r->addRoute('PUT', '/detalles/{id:\d+}', [DetalleProblemaController::class, 'update']);
-    $r->addRoute('DELETE', '/detalles/{id:\d+}', [DetalleProblemaController::class, 'destroy']);
+    $r->addRoute('GET', '/detalles', [DetalleProblemaController::class, 'getDetalles']);
+    $r->addRoute('GET', '/detalles/{id:\d+}', [DetalleProblemaController::class, 'getDetalle']);
+    $r->addRoute('POST', '/detalles', [DetalleProblemaController::class, 'createDetalle']);
+    $r->addRoute('PUT', '/detalles/{id:\d+}', [DetalleProblemaController::class, 'updateDetalle']);
+    $r->addRoute('DELETE', '/detalles/{id:\d+}', [DetalleProblemaController::class, 'deleteDetalle']);
 });
 
 $httpMethod = $_SERVER['REQUEST_METHOD'];

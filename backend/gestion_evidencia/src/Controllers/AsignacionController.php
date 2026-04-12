@@ -5,11 +5,11 @@ namespace App\Controllers;
 use App\Models\Asignacion;
 
 class AsignacionController {
-    public function index() {
+    public function getAsignaciones() {
         echo Asignacion::where('activo', true)->with('historial', 'evidencias')->get()->toJson();
     }
 
-    public function show($id) {
+    public function getAsignacion($id) {
         $asignacion = Asignacion::where('id', $id)->where('activo', true)->with('historial', 'evidencias')->first();
         if (!$asignacion) {
             http_response_code(404);
@@ -19,7 +19,7 @@ class AsignacionController {
         echo $asignacion->toJson();
     }
 
-    public function store() {
+    public function createAsignacion() {
         $data = json_decode(file_get_contents('php://input'), true);
         try {
             $data['activo'] = true;
@@ -34,5 +34,5 @@ class AsignacionController {
         }
     }
 
-    // Nota: No se implementan update ni destroy por requerimientos del usuario
+    // Nota: No se implementan update ni destroy por requerimientos del modelo de negocio
 }

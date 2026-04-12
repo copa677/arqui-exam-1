@@ -5,11 +5,11 @@ namespace App\Controllers;
 use App\Models\Usuario;
 
 class UsuarioController {
-    public function index() {
+    public function getUsuarios() {
         echo Usuario::where('activo', true)->with('rol')->get()->toJson();
     }
 
-    public function show($id) {
+    public function getUsuario($id) {
         $usuario = Usuario::where('id', $id)->where('activo', true)->with('rol')->first();
         if (!$usuario) {
             http_response_code(404);
@@ -19,7 +19,7 @@ class UsuarioController {
         echo $usuario->toJson();
     }
 
-    public function store() {
+    public function createUsuario() {
         $input = file_get_contents('php://input');
         $data = json_decode($input, true);
 
@@ -40,8 +40,14 @@ class UsuarioController {
         }
     }
 
-    public function update($id) {
+    public function updateUsuario($id) {
         $data = json_decode(file_get_contents('php://input'), true);
+        
+        // Limpiar password si viene vacío para no sobreescribir la actual
+        if (isset($data['password']) && empty(trim($data['password']))) {
+            unset($data['password']);
+        }
+
         $usuario = Usuario::where('id', $id)->where('activo', true)->first();
         if (!$usuario) {
             http_response_code(404);
@@ -52,7 +58,7 @@ class UsuarioController {
         echo $usuario->toJson();
     }
 
-    public function destroy($id) {
+    public function deleteUsuario($id) {
         $usuario = Usuario::where('id', $id)->where('activo', true)->first();
         if (!$usuario) {
             http_response_code(404);

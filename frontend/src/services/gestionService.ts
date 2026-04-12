@@ -13,13 +13,21 @@ export const gestionService = {
   },
 
   // Historial y Estados
+  getHistorial: async () => {
+    const response = await api.get<HistorialEstado[]>('/historial');
+    return response.data;
+  },
   createHistorial: async (data: Partial<HistorialEstado>) => {
     const response = await api.post<HistorialEstado>('/historial', data);
     return response.data;
   },
 
   // Evidencias
-  uploadEvidencia: async (data: Partial<Evidencia>) => {
+  getEvidencias: async () => {
+    const response = await api.get<Evidencia[]>('/evidencias');
+    return response.data;
+  },
+  createEvidencia: async (data: Partial<Evidencia>) => {
     const response = await api.post<Evidencia>('/evidencias', data);
     return response.data;
   }

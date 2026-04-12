@@ -5,11 +5,11 @@ namespace App\Controllers;
 use App\Models\Modulo;
 
 class ModuloController {
-    public function index() {
+    public function getModulos() {
         echo Modulo::where('activo', true)->with('facultad', 'ambientes')->get()->toJson();
     }
 
-    public function show($id) {
+    public function getModulo($id) {
         $modulo = Modulo::where('id', $id)->where('activo', true)->with('facultad', 'ambientes')->first();
         if (!$modulo) {
             http_response_code(404);
@@ -19,7 +19,7 @@ class ModuloController {
         echo $modulo->toJson();
     }
 
-    public function store() {
+    public function createModulo() {
         $data = json_decode(file_get_contents('php://input'), true);
         try {
             $data['activo'] = true;
@@ -32,7 +32,7 @@ class ModuloController {
         }
     }
 
-    public function update($id) {
+    public function updateModulo($id) {
         $data = json_decode(file_get_contents('php://input'), true);
         $modulo = Modulo::where('id', $id)->where('activo', true)->first();
         if (!$modulo) {
@@ -44,7 +44,7 @@ class ModuloController {
         echo $modulo->toJson();
     }
 
-    public function destroy($id) {
+    public function deleteModulo($id) {
         $modulo = Modulo::where('id', $id)->where('activo', true)->first();
         if (!$modulo) {
             http_response_code(404);

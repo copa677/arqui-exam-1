@@ -69,9 +69,14 @@ const UserModal: React.FC<UserModalProps> = ({ isOpen, onClose, onSuccess, userT
     setLoading(true);
     try {
       if (userToEdit?.id) {
-        await usuarioService.update(userToEdit.id, formData);
+        // Clonamos los datos y eliminamos password si está vacío para no sobreescribir con hash de ""
+        const dataToUpdate = { ...formData };
+        if (!dataToUpdate.password || dataToUpdate.password.trim() === '') {
+          delete dataToUpdate.password;
+        }
+        await usuarioService.updateUsuario(userToEdit.id, dataToUpdate);
       } else {
-        await usuarioService.create(formData as Usuario);
+        await usuarioService.createUsuario(formData as Usuario);
       }
       onSuccess();
       onClose();

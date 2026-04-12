@@ -5,11 +5,11 @@ namespace App\Controllers;
 use App\Models\Evidencia;
 
 class EvidenciaController {
-    public function index() {
+    public function getEvidencias() {
         echo Evidencia::where('activo', true)->get()->toJson();
     }
 
-    public function show($id) {
+    public function getEvidencia($id) {
         $evidencia = Evidencia::where('id', $id)->where('activo', true)->first();
         if (!$evidencia) {
             http_response_code(404);
@@ -19,7 +19,7 @@ class EvidenciaController {
         echo $evidencia->toJson();
     }
 
-    public function store() {
+    public function createEvidencia() {
         $data = json_decode(file_get_contents('php://input'), true);
         try {
             $data['activo'] = true;
@@ -32,7 +32,7 @@ class EvidenciaController {
         }
     }
 
-    public function update($id) {
+    public function updateEvidencia($id) {
         $data = json_decode(file_get_contents('php://input'), true);
         $evidencia = Evidencia::where('id', $id)->where('activo', true)->first();
         if (!$evidencia) {
@@ -44,7 +44,7 @@ class EvidenciaController {
         echo $evidencia->toJson();
     }
 
-    public function destroy($id) {
+    public function deleteEvidencia($id) {
         $evidencia = Evidencia::where('id', $id)->where('activo', true)->first();
         if ($evidencia) {
             $evidencia->activo = false;

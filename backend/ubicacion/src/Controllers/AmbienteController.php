@@ -5,11 +5,11 @@ namespace App\Controllers;
 use App\Models\Ambiente;
 
 class AmbienteController {
-    public function index() {
+    public function getAmbientes() {
         echo Ambiente::where('activo', true)->with('modulo')->get()->toJson();
     }
 
-    public function show($id) {
+    public function getAmbiente($id) {
         $ambiente = Ambiente::where('id', $id)->where('activo', true)->with('modulo')->first();
         if (!$ambiente) {
             http_response_code(404);
@@ -19,7 +19,7 @@ class AmbienteController {
         echo $ambiente->toJson();
     }
 
-    public function store() {
+    public function createAmbiente() {
         $data = json_decode(file_get_contents('php://input'), true);
         try {
             $data['activo'] = true;
@@ -32,7 +32,7 @@ class AmbienteController {
         }
     }
 
-    public function update($id) {
+    public function updateAmbiente($id) {
         $data = json_decode(file_get_contents('php://input'), true);
         $ambiente = Ambiente::where('id', $id)->where('activo', true)->first();
         if (!$ambiente) {
@@ -44,7 +44,7 @@ class AmbienteController {
         echo $ambiente->toJson();
     }
 
-    public function destroy($id) {
+    public function deleteAmbiente($id) {
         $ambiente = Ambiente::where('id', $id)->where('activo', true)->first();
         if (!$ambiente) {
             http_response_code(404);

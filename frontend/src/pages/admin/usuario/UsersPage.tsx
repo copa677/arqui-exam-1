@@ -17,7 +17,7 @@ const UsersPage: React.FC = () => {
   const fetchUsers = async () => {
     try {
       setLoading(true);
-      const data = await usuarioService.getAll();
+      const data = await usuarioService.getUsuarios();
       setUsers(data);
     } catch (err) {
       setError('Error al cargar la lista de usuarios. Revisa la conexión con el servidor.');
@@ -33,7 +33,7 @@ const UsersPage: React.FC = () => {
   const handleDelete = async (id: number) => {
     if (window.confirm('¿Estás seguro de que deseas eliminar este usuario?')) {
       try {
-        await usuarioService.delete(id);
+        await usuarioService.deleteUsuario(id);
         setUsers(users.filter(u => u.id !== id));
       } catch (err) {
         alert('Error al eliminar el usuario.');

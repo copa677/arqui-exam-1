@@ -23,25 +23,25 @@ Database::boot();
 
 $dispatcher = FastRoute\simpleDispatcher(function(FastRoute\RouteCollector $r) {
     // Facultades
-    $r->addRoute('GET', '/facultades', [FacultadController::class, 'index']);
-    $r->addRoute('GET', '/facultades/{id:\d+}', [FacultadController::class, 'show']);
-    $r->addRoute('POST', '/facultades', [FacultadController::class, 'store']);
-    $r->addRoute('PUT', '/facultades/{id:\d+}', [FacultadController::class, 'update']);
-    $r->addRoute('DELETE', '/facultades/{id:\d+}', [FacultadController::class, 'destroy']);
+    $r->addRoute('GET', '/facultades', [FacultadController::class, 'getFacultades']);
+    $r->addRoute('GET', '/facultades/{id:\d+}', [FacultadController::class, 'getFacultad']);
+    $r->addRoute('POST', '/facultades', [FacultadController::class, 'createFacultad']);
+    $r->addRoute('PUT', '/facultades/{id:\d+}', [FacultadController::class, 'updateFacultad']);
+    $r->addRoute('DELETE', '/facultades/{id:\d+}', [FacultadController::class, 'deleteFacultad']);
 
     // Modulos
-    $r->addRoute('GET', '/modulos', [ModuloController::class, 'index']);
-    $r->addRoute('GET', '/modulos/{id:\d+}', [ModuloController::class, 'show']);
-    $r->addRoute('POST', '/modulos', [ModuloController::class, 'store']);
-    $r->addRoute('PUT', '/modulos/{id:\d+}', [ModuloController::class, 'update']);
-    $r->addRoute('DELETE', '/modulos/{id:\d+}', [ModuloController::class, 'destroy']);
+    $r->addRoute('GET', '/modulos', [ModuloController::class, 'getModulos']);
+    $r->addRoute('GET', '/modulos/{id:\d+}', [ModuloController::class, 'getModulo']);
+    $r->addRoute('POST', '/modulos', [ModuloController::class, 'createModulo']);
+    $r->addRoute('PUT', '/modulos/{id:\d+}', [ModuloController::class, 'updateModulo']);
+    $r->addRoute('DELETE', '/modulos/{id:\d+}', [ModuloController::class, 'deleteModulo']);
 
     // Ambientes
-    $r->addRoute('GET', '/ambientes', [AmbienteController::class, 'index']);
-    $r->addRoute('GET', '/ambientes/{id:\d+}', [AmbienteController::class, 'show']);
-    $r->addRoute('POST', '/ambientes', [AmbienteController::class, 'store']);
-    $r->addRoute('PUT', '/ambientes/{id:\d+}', [AmbienteController::class, 'update']);
-    $r->addRoute('DELETE', '/ambientes/{id:\d+}', [AmbienteController::class, 'destroy']);
+    $r->addRoute('GET', '/ambientes', [AmbienteController::class, 'getAmbientes']);
+    $r->addRoute('GET', '/ambientes/{id:\d+}', [AmbienteController::class, 'getAmbiente']);
+    $r->addRoute('POST', '/ambientes', [AmbienteController::class, 'createAmbiente']);
+    $r->addRoute('PUT', '/ambientes/{id:\d+}', [AmbienteController::class, 'updateAmbiente']);
+    $r->addRoute('DELETE', '/ambientes/{id:\d+}', [AmbienteController::class, 'deleteAmbiente']);
 });
 
 $httpMethod = $_SERVER['REQUEST_METHOD'];

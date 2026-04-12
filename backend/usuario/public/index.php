@@ -27,18 +27,18 @@ $dispatcher = FastRoute\simpleDispatcher(function(FastRoute\RouteCollector $r) {
     $r->addRoute('POST', '/login', [AuthController::class, 'login']);
 
     // Usuarios
-    $r->addRoute('GET', '/usuarios', [UsuarioController::class, 'index']);
-    $r->addRoute('GET', '/usuarios/{id:\d+}', [UsuarioController::class, 'show']);
-    $r->addRoute('POST', '/usuarios', [UsuarioController::class, 'store']);
-    $r->addRoute('PUT', '/usuarios/{id:\d+}', [UsuarioController::class, 'update']);
-    $r->addRoute('DELETE', '/usuarios/{id:\d+}', [UsuarioController::class, 'destroy']);
+    $r->addRoute('GET', '/usuarios', [UsuarioController::class, 'getUsuarios']);
+    $r->addRoute('GET', '/usuarios/{id:\d+}', [UsuarioController::class, 'getUsuario']);
+    $r->addRoute('POST', '/usuarios', [UsuarioController::class, 'createUsuario']);
+    $r->addRoute('PUT', '/usuarios/{id:\d+}', [UsuarioController::class, 'updateUsuario']);
+    $r->addRoute('DELETE', '/usuarios/{id:\d+}', [UsuarioController::class, 'deleteUsuario']);
 
     // Roles
-    $r->addRoute('GET', '/roles', [RolController::class, 'index']);
-    $r->addRoute('GET', '/roles/{id:\d+}', [RolController::class, 'show']);
-    $r->addRoute('POST', '/roles', [RolController::class, 'store']);
-    $r->addRoute('PUT', '/roles/{id:\d+}', [RolController::class, 'update']);
-    $r->addRoute('DELETE', '/roles/{id:\d+}', [RolController::class, 'destroy']);
+    $r->addRoute('GET', '/roles', [RolController::class, 'getRoles']);
+    $r->addRoute('GET', '/roles/{id:\d+}', [RolController::class, 'getRol']);
+    $r->addRoute('POST', '/roles', [RolController::class, 'createRol']);
+    $r->addRoute('PUT', '/roles/{id:\d+}', [RolController::class, 'updateRol']);
+    $r->addRoute('DELETE', '/roles/{id:\d+}', [RolController::class, 'deleteRol']);
 });
 
 // Fetch method and URI from somewhere

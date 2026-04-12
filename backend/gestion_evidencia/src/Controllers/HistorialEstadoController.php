@@ -5,11 +5,11 @@ namespace App\Controllers;
 use App\Models\HistorialEstado;
 
 class HistorialEstadoController {
-    public function index() {
+    public function getHistoriales() {
         echo HistorialEstado::where('activo', true)->get()->toJson();
     }
 
-    public function show($id) {
+    public function getHistorial($id) {
         $historial = HistorialEstado::where('id', $id)->where('activo', true)->first();
         if (!$historial) {
             http_response_code(404);
@@ -19,7 +19,7 @@ class HistorialEstadoController {
         echo $historial->toJson();
     }
 
-    public function store() {
+    public function createHistorial() {
         $data = json_decode(file_get_contents('php://input'), true);
         try {
             $data['activo'] = true;
@@ -33,7 +33,7 @@ class HistorialEstadoController {
         }
     }
 
-    public function update($id) {
+    public function updateHistorial($id) {
         $data = json_decode(file_get_contents('php://input'), true);
         $historial = HistorialEstado::where('id', $id)->where('activo', true)->first();
         if (!$historial) {
@@ -45,7 +45,7 @@ class HistorialEstadoController {
         echo $historial->toJson();
     }
 
-    public function destroy($id) {
+    public function deleteHistorial($id) {
         $historial = HistorialEstado::where('id', $id)->where('activo', true)->first();
         if ($historial) {
             $historial->activo = false;
