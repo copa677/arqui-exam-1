@@ -7,8 +7,9 @@ const MaintenanceLayout: React.FC = () => {
   const navigate = useNavigate();
 
   const handleLogout = () => {
-    // Aquí se limpiará el token en el futuro
-    navigate('/login');
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    navigate('/', { replace: true });
   };
 
   return (

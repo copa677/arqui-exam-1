@@ -1,6 +1,7 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
 import HomePage from '../pages/public/HomePage';
 import LoginPage from '../pages/auth/LoginPage';
+import ProtectedRoute from '../components/auth/ProtectedRoute';
 import AdminLayout from '../components/layout/AdminLayout';
 import MaintenanceLayout from '../components/layout/MaintenanceLayout';
 import UsersPage from '../pages/admin/usuario/UsersPage';
@@ -17,7 +18,11 @@ const AppRoutes = () => {
       <Route path="/login" element={<LoginPage />} />
 
       {/* Rutas de Administración (Decanos) */}
-      <Route path="/admin" element={<AdminLayout />}>
+      <Route path="/admin" element={
+        <ProtectedRoute allowedRoleIds={[1]}>
+          <AdminLayout />
+        </ProtectedRoute>
+      }>
         <Route index element={<Navigate to="/admin/usuarios" replace />} />
         <Route path="usuarios" element={<UsersPage />} />
         <Route path="ubicacion" element={<LocationsPage />} />
@@ -33,7 +38,11 @@ const AppRoutes = () => {
       </Route>
 
       {/* Rutas para Encargados de Mantenimiento (Técnicos) */}
-      <Route path="/tecnico" element={<MaintenanceLayout />}>
+      <Route path="/tecnico" element={
+        <ProtectedRoute allowedRoleIds={[2]}>
+          <MaintenanceLayout />
+        </ProtectedRoute>
+      }>
         <Route index element={<EncargadoPage />} />
       </Route>
 

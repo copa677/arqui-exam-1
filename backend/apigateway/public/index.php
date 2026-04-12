@@ -31,15 +31,20 @@ $uri = rawurldecode($uri);
 
 // Definir mapeo de rutas a microservicios
 $routes = [
+    //microservicio de usuarios
     '/api/usuarios' => $_ENV['USERS_SERVICE_URL'],
     '/api/login' => $_ENV['USERS_SERVICE_URL'],
     '/api/roles' => $_ENV['USERS_SERVICE_URL'],
+    
+    //microservicio de ubicacion
     '/api/ubicacion' => $_ENV['UBICACION_SERVICE_URL'],
     '/api/facultades' => $_ENV['UBICACION_SERVICE_URL'],
     '/api/modulos' => $_ENV['UBICACION_SERVICE_URL'],
     '/api/ambientes' => $_ENV['UBICACION_SERVICE_URL'],
+    
     // Microservicio de Reportes (PUBLICO)
     '/api/reportes' => $_ENV['REPORTE_SERVICE_URL'],
+    
     // Microservicio de Gestión y Evidencia (PRIVADO)
     '/api/asignaciones' => $_ENV['GESTION_SERVICE_URL'],
     '/api/historial' => $_ENV['GESTION_SERVICE_URL'],
@@ -77,21 +82,26 @@ if (!$isPublic) {
     AuthMiddleware::handle();
 }
 
-// Función para reenviar la petición (Proxy)
+// Función para reenviar la petición (Proxy) mejorada
 function proxyRequest($url, $method, $data = null) {
     $ch = curl_init($url);
     
-    // Pasar los headers originales
+    // Filtrar headers originales para evitar conflictos (especialmente 'Host')
     $headers = [];
+    $excludeHeaders = ['host', 'content-length', 'connection'];
+    
     foreach (getallheaders() as $key => $value) {
-        $headers[] = "$key: $value";
+        if (!in_array(strtolower($key), $excludeHeaders)) {
+            $headers[] = "$key: $value";
+        }
     }
 
     curl_setopt($ch, CURLOPT_CUSTOMREQUEST, $method);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+    curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
     
-    if ($data) {
+    if ($data && ($method === 'POST' || $method === 'PUT')) {
         curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
     }
 
@@ -100,7 +110,7 @@ function proxyRequest($url, $method, $data = null) {
     
     if (curl_errno($ch)) {
         http_response_code(502);
-        echo json_encode(['error' => 'Error de comunicación con el microservicio: ' . curl_error($ch)]);
+        echo json_encode(['error' => 'Error de conexión con el microservicio: ' . curl_error($ch)]);
         curl_close($ch);
         exit();
     }

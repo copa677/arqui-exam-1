@@ -1,26 +1,69 @@
-import React, { useState } from 'react';
-import { Plus, Building2, Layers, Home, Edit, Trash2 } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Plus, Building2, Layers, Home, Edit, Trash2, Loader2 } from 'lucide-react';
+import { ubicacionService } from '../../../services/ubicacionService';
+import type { Facultad, Modulo, Ambiente } from '../../../types/ubicacion';
+import FacultadModal from './FacultadModal';
+import ModuloModal from './ModuloModal';
+import AmbienteModal from './AmbienteModal';
 import './LocationsPage.css';
 
 const LocationsPage: React.FC = () => {
   const [activeSubTab, setActiveSubTab] = useState('facultades');
+  const [loading, setLoading] = useState(true);
 
-  const mockFacultades = [
-    { id: 1, nombre: 'Facultad de Ciencias de la Computación', abr: 'FICCT', modulos: 5 },
-    { id: 2, nombre: 'Facultad de Tecnología', abr: 'TECNÓ', modulos: 3 },
-  ];
+  // Estados para datos reales
+  const [facultades, setFacultades] = useState<Facultad[]>([]);
+  const [modulos, setModulos] = useState<Modulo[]>([]);
+  const [ambientes, setAmbientes] = useState<Ambiente[]>([]);
 
-  const mockModulos = [
-    { id: 1, nro: '236', facultad: 'FICCT', ambientes: 15 },
-    { id: 2, nro: '225', facultad: 'TECNÓ', ambientes: 10 },
-    { id: 3, nro: '237', facultad: 'FICCT', ambientes: 12 },
-  ];
+  // Estados para Modals
+  const [isFacultadModalOpen, setIsFacultadModalOpen] = useState(false);
+  const [isModuloModalOpen, setIsModuloModalOpen] = useState(false);
+  const [isAmbienteModalOpen, setIsAmbienteModalOpen] = useState(false);
 
-  const mockAmbientes = [
-    { id: 1, nombre: 'Aula 12', piso: 'Planta Baja', modulo: '236' },
-    { id: 2, nombre: 'Laboratorio de Redes', piso: '1er Piso', modulo: '236' },
-    { id: 3, nombre: 'Aula 05', piso: '2do Piso', modulo: '225' },
-  ];
+  // Estados para Edición
+  const [selectedFacultad, setSelectedFacultad] = useState<Facultad | null>(null);
+  const [selectedModulo, setSelectedModulo] = useState<Modulo | null>(null);
+  const [selectedAmbiente, setSelectedAmbiente] = useState<Ambiente | null>(null);
+
+  const fetchData = async () => {
+    setLoading(true);
+    try {
+      const [fData, mData, aData] = await Promise.all([
+        ubicacionService.getFacultades(),
+        ubicacionService.getModulos(),
+        ubicacionService.getAmbientes()
+      ]);
+      setFacultades(fData);
+      setModulos(mData);
+      setAmbientes(aData);
+    } catch (err) {
+      console.error('Error al cargar datos de ubicación:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  const handleDelete = async (type: string, id: number) => {
+    const confirmMsg = type === 'facultad'
+      ? '¿Estás seguro? Se eliminarán todos los módulos y ambientes asociados a esta facultad.'
+      : '¿Estás seguro de eliminar este registro?';
+
+    if (window.confirm(confirmMsg)) {
+      try {
+        if (type === 'facultad') await ubicacionService.deleteFacultad(id);
+        if (type === 'modulo') await ubicacionService.deleteModulo(id);
+        if (type === 'ambiente') await ubicacionService.deleteAmbiente(id);
+        fetchData(); // Recargar todo para reflejar cambios en cascada
+      } catch (err) {
+        alert('Error al eliminar el registro.');
+      }
+    }
+  };
 
   return (
     <div className="page-container">
@@ -33,21 +76,21 @@ const LocationsPage: React.FC = () => {
       </div>
 
       <div className="tab-navigation">
-        <button 
+        <button
           className={`tab-btn ${activeSubTab === 'facultades' ? 'active' : ''}`}
           onClick={() => setActiveSubTab('facultades')}
         >
           <Building2 size={18} />
           <span>Facultades</span>
         </button>
-        <button 
+        <button
           className={`tab-btn ${activeSubTab === 'modulos' ? 'active' : ''}`}
           onClick={() => setActiveSubTab('modulos')}
         >
           <Layers size={18} />
           <span>Módulos</span>
         </button>
-        <button 
+        <button
           className={`tab-btn ${activeSubTab === 'ambientes' ? 'active' : ''}`}
           onClick={() => setActiveSubTab('ambientes')}
         >
@@ -59,82 +102,112 @@ const LocationsPage: React.FC = () => {
       <div className="glass-card table-container">
         <div className="table-header-row">
           <h3>Lista de {activeSubTab.charAt(0).toUpperCase() + activeSubTab.slice(1)}</h3>
-          <button className="add-btn">
+          <button
+            className="add-btn"
+            onClick={() => {
+              if (activeSubTab === 'facultades') { setSelectedFacultad(null); setIsFacultadModalOpen(true); }
+              if (activeSubTab === 'modulos') { setSelectedModulo(null); setIsModuloModalOpen(true); }
+              if (activeSubTab === 'ambientes') { setSelectedAmbiente(null); setIsAmbienteModalOpen(true); }
+            }}
+          >
             <Plus size={16} />
             <span>Agregar {activeSubTab.slice(0, -1)}</span>
           </button>
         </div>
-        
-        <table className="custom-table">
-          <thead>
-            {activeSubTab === 'facultades' && (
-              <tr>
-                <th>Nombre</th>
-                <th>Abreviatura</th>
-                <th>Módulos</th>
-                <th>Acciones</th>
-              </tr>
-            )}
-            {activeSubTab === 'modulos' && (
-              <tr>
-                <th>Nro Módulo</th>
-                <th>Facultad</th>
-                <th>Ambientes</th>
-                <th>Acciones</th>
-              </tr>
-            )}
-            {activeSubTab === 'ambientes' && (
-              <tr>
-                <th>Nombre Ambiente</th>
-                <th>Piso</th>
-                <th>Módulo</th>
-                <th>Acciones</th>
-              </tr>
-            )}
-          </thead>
-          <tbody>
-            {activeSubTab === 'facultades' && mockFacultades.map(f => (
-              <tr key={f.id}>
-                <td>{f.nombre}</td>
-                <td><span className="code-badge">{f.abr}</span></td>
-                <td>{f.modulos}</td>
-                <td>
-                  <div className="actions-cell">
-                    <button className="edit-btn"><Edit size={16} /></button>
-                    <button className="delete-btn"><Trash2 size={16} /></button>
-                  </div>
-                </td>
-              </tr>
-            ))}
-            {activeSubTab === 'modulos' && mockModulos.map(m => (
-              <tr key={m.id}>
-                <td>Módulo {m.nro}</td>
-                <td>{m.facultad}</td>
-                <td>{m.ambientes}</td>
-                <td>
-                  <div className="actions-cell">
-                    <button className="edit-btn"><Edit size={16} /></button>
-                    <button className="delete-btn"><Trash2 size={16} /></button>
-                  </div>
-                </td>
-              </tr>
-            ))}
-            {activeSubTab === 'ambientes' && mockAmbientes.map(a => (
-              <tr key={a.id}>
-                <td>{a.nombre}</td>
-                <td>{a.piso}</td>
-                <td>Módulo {a.modulo}</td>
-                <td>
-                  <div className="actions-cell">
-                    <button className="edit-btn"><Edit size={16} /></button>
-                    <button className="delete-btn"><Trash2 size={16} /></button>
-                  </div>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+
+        {loading ? (
+          <div className="loading-state">
+            <Loader2 className="animate-spin" size={32} />
+            <p>Cargando datos...</p>
+          </div>
+        ) : (
+          <table className="custom-table">
+            <thead>
+              {activeSubTab === 'facultades' && (
+                <tr>
+                  <th>Nombre</th>
+                  <th>Abreviatura</th>
+                  <th>Acciones</th>
+                </tr>
+              )}
+              {activeSubTab === 'modulos' && (
+                <tr>
+                  <th>Nro Módulo</th>
+                  <th>Facultad</th>
+                  <th>Acciones</th>
+                </tr>
+              )}
+              {activeSubTab === 'ambientes' && (
+                <tr>
+                  <th>Nombre Ambiente</th>
+                  <th>Piso</th>
+                  <th>Módulo</th>
+                  <th>Acciones</th>
+                </tr>
+              )}
+            </thead>
+            <tbody>
+              {activeSubTab === 'facultades' && facultades.map(f => (
+                <tr key={f.id}>
+                  <td>{f.nombre}</td>
+                  <td><span className="code-badge">{f.abreviatura}</span></td>
+                  <td>
+                    <div className="actions-cell">
+                      <button className="edit-btn" onClick={() => { setSelectedFacultad(f); setIsFacultadModalOpen(true); }}><Edit size={16} /></button>
+                      <button className="delete-btn" onClick={() => f.id && handleDelete('facultad', f.id)}><Trash2 size={16} /></button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+              {activeSubTab === 'modulos' && modulos.map(m => (
+                <tr key={m.id}>
+                  <td>Módulo {m.numero_modulo}</td>
+                  <td>{facultades.find(f => f.id === m.facultad_id)?.nombre || 'N/A'}</td>
+                  <td>
+                    <div className="actions-cell">
+                      <button className="edit-btn" onClick={() => { setSelectedModulo(m); setIsModuloModalOpen(true); }}><Edit size={16} /></button>
+                      <button className="delete-btn" onClick={() => m.id && handleDelete('modulo', m.id)}><Trash2 size={16} /></button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+              {activeSubTab === 'ambientes' && ambientes.map(a => (
+                <tr key={a.id}>
+                  <td>{a.nombre_ambiente}</td>
+                  <td>{a.piso !== undefined ? `Piso ${a.piso}` : 'N/A'}</td>
+                  <td>Módulo {modulos.find(m => m.id === a.modulo_id)?.numero_modulo || 'N/A'}</td>
+                  <td>
+                    <div className="actions-cell">
+                      <button className="edit-btn" onClick={() => { setSelectedAmbiente(a); setIsAmbienteModalOpen(true); }}><Edit size={16} /></button>
+                      <button className="delete-btn" onClick={() => a.id && handleDelete('ambiente', a.id)}><Trash2 size={16} /></button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
       </div>
+
+      {/* Modals */}
+      <FacultadModal
+        isOpen={isFacultadModalOpen}
+        onClose={() => setIsFacultadModalOpen(false)}
+        onSuccess={fetchData}
+        facultadToEdit={selectedFacultad}
+      />
+      <ModuloModal
+        isOpen={isModuloModalOpen}
+        onClose={() => setIsModuloModalOpen(false)}
+        onSuccess={fetchData}
+        moduloToEdit={selectedModulo}
+      />
+      <AmbienteModal
+        isOpen={isAmbienteModalOpen}
+        onClose={() => setIsAmbienteModalOpen(false)}
+        onSuccess={fetchData}
+        ambienteToEdit={selectedAmbiente}
+      />
     </div>
   );
 };

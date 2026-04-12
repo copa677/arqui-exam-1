@@ -8,8 +8,9 @@ const AdminLayout: React.FC = () => {
   const location = useLocation();
 
   const handleLogout = () => {
-    // En el futuro aquí se limpiará el token
-    navigate('/');
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    navigate('/', { replace: true });
   };
 
   // Obtener la pestaña activa de la URL para mostrarla en el breadcrumb
