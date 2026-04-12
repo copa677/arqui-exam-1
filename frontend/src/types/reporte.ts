@@ -3,7 +3,7 @@ export interface Reportador {
   nombres: string;
   apellidos: string;
   correo: string;
-  tipo_reportador: 'Estudiante' | 'Docente' | 'Administrativo';
+  tipo_reportador: 'Estudiante' | 'Docente' | 'Administrativo' | string;
   activo: boolean;
 }
 

@@ -6,7 +6,11 @@ use App\Models\Facultad;
 
 class FacultadController {
     public function getFacultades() {
-        echo Facultad::where('activo', true)->with('modulos')->get()->toJson();
+        echo Facultad::where('activo', true)->with(['modulos' => function($q) {
+            $q->where('activo', true)->with(['ambientes' => function($q2) {
+                $q2->where('activo', true);
+            }]);
+        }])->get()->toJson();
     }
 
     public function getFacultad($id) {

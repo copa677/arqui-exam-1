@@ -1,5 +1,6 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
 import HomePage from '../pages/public/HomePage';
+import ReportPage from '../pages/public/ReportPage';
 import LoginPage from '../pages/auth/LoginPage';
 import ProtectedRoute from '../components/auth/ProtectedRoute';
 import AdminLayout from '../components/layout/AdminLayout';
@@ -15,6 +16,7 @@ const AppRoutes = () => {
     <Routes>
       {/* Rutas Públicas */}
       <Route path="/" element={<HomePage />} />
+      <Route path="/reportar" element={<ReportPage />} />
       <Route path="/login" element={<LoginPage />} />
 
       {/* Rutas de Administración (Decanos) */}

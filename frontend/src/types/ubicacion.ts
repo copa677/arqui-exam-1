@@ -3,6 +3,7 @@ export interface Facultad {
   nombre: string;
   abreviatura: string;
   activo: boolean;
+  modulos?: Modulo[];
 }
 
 export interface Modulo {
@@ -10,6 +11,7 @@ export interface Modulo {
   numero_modulo: string;
   facultad_id: number;
   activo: boolean;
+  ambientes?: Ambiente[];
 }
 
 export interface Ambiente {

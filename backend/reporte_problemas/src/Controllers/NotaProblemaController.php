@@ -6,11 +6,11 @@ use App\Models\NotaProblema;
 
 class NotaProblemaController {
     public function getNotasProblema() {
-        echo NotaProblema::where('activo', true)->with('reportador', 'detalles')->get()->toJson();
+        echo NotaProblema::where('activo', true)->with(['reportador', 'detalles.tipoIncidencia'])->get()->toJson();
     }
 
     public function getNotaProblema($id) {
-        $nota = NotaProblema::where('id', $id)->where('activo', true)->with('reportador', 'detalles')->first();
+        $nota = NotaProblema::where('id', $id)->where('activo', true)->with(['reportador', 'detalles.tipoIncidencia'])->first();
         if (!$nota) {
             http_response_code(404);
             echo json_encode(['error' => 'Nota de problema no encontrada o inactiva']);

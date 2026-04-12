@@ -43,7 +43,10 @@ $routes = [
     '/api/ambientes' => $_ENV['UBICACION_SERVICE_URL'],
     
     // Microservicio de Reportes (PUBLICO)
-    '/api/reportes' => $_ENV['REPORTE_SERVICE_URL'],
+    '/api/reportadores' => $_ENV['REPORTE_SERVICE_URL'],
+    '/api/tipos-incidencia' => $_ENV['REPORTE_SERVICE_URL'],
+    '/api/notas' => $_ENV['REPORTE_SERVICE_URL'],
+    '/api/detalles' => $_ENV['REPORTE_SERVICE_URL'],
     
     // Microservicio de Gestión y Evidencia (PRIVADO)
     '/api/asignaciones' => $_ENV['GESTION_SERVICE_URL'],
@@ -71,11 +74,15 @@ if (!$targetService) {
 }
 
 // Validación de Seguridad (JWT)
-// EXCEPCIONES: /api/login, registro de usuarios (POST) y reportes (Públicas)
+// EXCEPCIONES: /api/login, registro de usuarios (POST), reportes (Públicas) y listado de ubicaciones (GET)
 $isPublic = (
     $uri === '/api/login' || 
     ($uri === '/api/usuarios' && $method === 'POST') || 
-    strpos($uri, '/api/reportes') === 0
+    strpos($uri, '/api/reportadores') === 0 ||
+    strpos($uri, '/api/tipos-incidencia') === 0 ||
+    strpos($uri, '/api/notas') === 0 ||
+    strpos($uri, '/api/detalles') === 0 ||
+    ($method === 'GET' && (strpos($uri, '/api/facultades') === 0 || strpos($uri, '/api/modulos') === 0 || strpos($uri, '/api/ambientes') === 0))
 );
 
 if (!$isPublic) {

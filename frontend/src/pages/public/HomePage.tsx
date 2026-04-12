@@ -25,7 +25,7 @@ const HomePage: React.FC = () => {
           <p>¿Has notado algún problema en las instalaciones? Infórmanos rápidamente para que podamos solucionarlo.</p>
           
           <div className="hero-actions">
-            <button className="cta-button">
+            <button className="cta-button" onClick={() => navigate('/reportar')}>
               <span>Reportar un Problema</span>
               <AlertCircle size={20} />
             </button>

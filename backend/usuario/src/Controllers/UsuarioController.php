@@ -29,6 +29,16 @@ class UsuarioController {
             return;
         }
 
+        // Verificar que el correo sea único
+        if (isset($data['correo'])) {
+            $existente = Usuario::where('correo', $data['correo'])->first();
+            if ($existente) {
+                http_response_code(409); // 409 Conflict
+                echo json_encode(['error' => 'El correo ingresado ya se encuentra en uso por otro usuario.']);
+                return;
+            }
+        }
+
         try {
             $data['activo'] = true;
             $usuario = Usuario::create($data);
@@ -46,6 +56,16 @@ class UsuarioController {
         // Limpiar password si viene vacío para no sobreescribir la actual
         if (isset($data['password']) && empty(trim($data['password']))) {
             unset($data['password']);
+        }
+
+        // Verificar que el nuevo correo no pertenezca a otro usuario
+        if (isset($data['correo'])) {
+            $existente = Usuario::where('correo', $data['correo'])->where('id', '!=', $id)->first();
+            if ($existente) {
+                http_response_code(409); // 409 Conflict
+                echo json_encode(['error' => 'El correo ingresado ya se encuentra en uso por otro usuario.']);
+                return;
+            }
         }
 
         $usuario = Usuario::where('id', $id)->where('activo', true)->first();
