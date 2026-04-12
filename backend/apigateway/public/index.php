@@ -97,6 +97,11 @@ function proxyRequest($url, $method, $data = null) {
     $headers = [];
     $excludeHeaders = ['host', 'content-length', 'connection'];
     
+    // Si los datos son un arreglo (cURL genera su propio boundary multipart, por lo que bloqueamos la cabecera vieja)
+    if (is_array($data)) {
+        $excludeHeaders[] = 'content-type';
+    }
+    
     foreach (getallheaders() as $key => $value) {
         if (!in_array(strtolower($key), $excludeHeaders)) {
             $headers[] = "$key: $value";
@@ -128,7 +133,20 @@ function proxyRequest($url, $method, $data = null) {
 }
 
 // Obtener datos del cuerpo
-$inputData = file_get_contents('php://input');
+$contentType = $_SERVER['CONTENT_TYPE'] ?? '';
+if (strpos(strtolower($contentType), 'multipart/form-data') !== false) {
+    // Si es multipart, reconstruimos los datos con las variables nativas PHP
+    $inputData = $_POST;
+    // Anexamos los archivos fisicos a nivel de sistema usando CurlFile
+    foreach ($_FILES as $key => $file) {
+        if ($file['error'] === UPLOAD_ERR_OK) {
+            $inputData[$key] = new \CURLFile($file['tmp_name'], $file['type'], $file['name']);
+        }
+    }
+} else {
+    // Si es puro JSON, leemos de la entrada cruda stringificada
+    $inputData = file_get_contents('php://input');
+}
 
 // Ejecutar el proxy
 $targetUrl = $targetService . $targetPath;

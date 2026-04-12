@@ -156,3 +156,70 @@
   padding: 12px;
   border-radius: 10px;
 }
+
+.finish-task-group {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.evidence-upload-zone {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  background: var(--glass-bg);
+  border: 1px dashed var(--glass-border);
+  padding: 16px;
+  border-radius: 12px;
+}
+
+.evidence-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px;
+  background: var(--surface);
+  color: var(--text);
+  border: 1px solid var(--glass-border);
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: var(--transition-fast);
+}
+
+.evidence-btn:hover {
+  background: var(--glass-highlight);
+  border-color: var(--primary);
+}
+
+.evidence-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.cancel-evidence {
+  flex: 1;
+  background: transparent;
+  color: var(--text-secondary);
+  border: 1px solid var(--glass-border);
+  border-radius: 8px;
+  font-weight: 500;
+  transition: var(--transition-fast);
+}
+
+.cancel-evidence:hover {
+  background: var(--surface);
+  color: var(--text);
+}
+
+.evidence-actions .finish-btn {
+  flex: 2;
+}
+
+.action-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none !important;
+  box-shadow: none !important;
+}

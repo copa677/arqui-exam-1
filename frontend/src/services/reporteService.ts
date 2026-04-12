@@ -27,6 +27,10 @@ export const reporteService = {
     const response = await api.post<DetalleProblema>('/detalles', data);
     return response.data;
   },
+  updateDetalle: async (id: number, data: Partial<DetalleProblema>) => {
+    const response = await api.put<DetalleProblema>(`/detalles/${id}`, data);
+    return response.data;
+  },
 
   // Tipos
   getTiposIncidencia: async () => {

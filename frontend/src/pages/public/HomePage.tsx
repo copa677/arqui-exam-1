@@ -29,9 +29,6 @@ const HomePage: React.FC = () => {
               <span>Reportar un Problema</span>
               <AlertCircle size={20} />
             </button>
-            <button className="secondary-cta">
-              Ver incidencias recientes
-            </button>
           </div>
         </div>
         
@@ -55,22 +52,22 @@ const HomePage: React.FC = () => {
       </main>
 
       <section className="how-it-works">
-        <h2>¿Cómo funciona?</h2>
+        <h2>¿Cómo funciona el flujo de mantenimiento?</h2>
         <div className="steps-grid">
           <div className="step">
             <div className="step-num">01</div>
-            <h4>Reporta</h4>
-            <p>Seleccionas el lugar y describes el desperfecto.</p>
+            <h4>Reportas Identificando</h4>
+            <p>Añades una o varias incidencias a tu lista, detallando qué sucede y en qué ambiente exacto del módulo se encuentra.</p>
           </div>
           <div className="step">
             <div className="step-num">02</div>
-            <h4>Verificamos</h4>
-            <p>El personal técnico valida y asigna la tarea.</p>
+            <h4>Decanato Delega</h4>
+            <p>El Decano monitorea los reportes huérfanos y asigna los problemas a los Técnicos encargados según su especialidad.</p>
           </div>
           <div className="step">
             <div className="step-num">03</div>
-            <h4>Solucionamos</h4>
-            <p>Se realiza el mantenimiento y se cierra el caso.</p>
+            <h4>Técnico Evidencia</h4>
+            <p>El técnico repara el daño físico, toma y sube fotografías al sistema certificando su labor, y cierra el caso permanentemente.</p>
           </div>
         </div>
       </section>

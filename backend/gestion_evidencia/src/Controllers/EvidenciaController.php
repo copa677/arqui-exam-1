@@ -20,15 +20,50 @@ class EvidenciaController {
     }
 
     public function createEvidencia() {
-        $data = json_decode(file_get_contents('php://input'), true);
-        try {
-            $data['activo'] = true;
-            $evidencia = Evidencia::create($data);
-            http_response_code(201);
-            echo $evidencia->toJson();
-        } catch (\Exception $e) {
+        // En php, las peticiones multipart/form-data viajan por $_POST y $_FILES
+        $asignacion_id = $_POST['asignacion_id'] ?? null;
+        $momento = $_POST['momento'] ?? 'Despues';
+
+        // Validar si existe archivo
+        if (!isset($_FILES['foto']) || $_FILES['foto']['error'] !== UPLOAD_ERR_OK) {
             http_response_code(400);
-            echo json_encode(['error' => 'Error al guardar evidencia: ' . $e->getMessage()]);
+            echo json_encode(['error' => 'No se recibió ningún archivo válido.']);
+            return;
+        }
+
+        if (!$asignacion_id) {
+            http_response_code(400);
+            echo json_encode(['error' => 'Falta el asignacion_id.']);
+            return;
+        }
+
+        // Crear carpeta de evidencias si no existe
+        $targetDir = __DIR__ . '/../../public/evidencia/';
+        if (!is_dir($targetDir)) {
+            mkdir($targetDir, 0777, true);
+        }
+
+        // Generar nombre seguro
+        $fileName = uniqid() . '_' . basename($_FILES['foto']['name']);
+        $targetFile = $targetDir . $fileName;
+
+        if (move_uploaded_file($_FILES['foto']['tmp_name'], $targetFile)) {
+            try {
+                $evidencia = Evidencia::create([
+                    'url_archivo' => '/evidencia/' . $fileName,
+                    'momento' => $momento,
+                    'asignacion_id' => $asignacion_id,
+                    'activo' => true
+                ]);
+                http_response_code(201);
+                echo $evidencia->toJson();
+            } catch (\Exception $e) {
+                http_response_code(400);
+                echo json_encode(['error' => 'Error al guardar en BD: ' . $e->getMessage()]);
+            }
+        } else {
+            http_response_code(500);
+            echo json_encode(['error' => 'Error al escribir el archivo en el disco.']);
         }
     }
 

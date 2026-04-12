@@ -115,6 +115,7 @@
 .tech-name {
   font-size: 0.875rem;
   font-weight: 700;
+  color: white;
 }
 
 .tech-desc {
@@ -147,4 +148,110 @@
   color: var(--success);
   font-weight: 700;
   height: 100%;
+}
+
+.custom-tabs {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.tab-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 24px;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  color: var(--text-secondary);
+  border-radius: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition-fast);
+}
+
+.tab-btn:hover {
+  background: var(--surface);
+  color: var(--text);
+}
+
+.tab-btn.active {
+  background: var(--primary);
+  color: white;
+  border-color: var(--primary);
+  box-shadow: 0 4px 12px var(--primary-glow);
+}
+
+.evidence-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 24px;
+}
+
+.completed-task-card {
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.completed-image-wrapper {
+  position: relative;
+  height: 200px;
+  width: 100%;
+  background: var(--surface);
+}
+
+.evidence-photo {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.status-overlay {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: rgba(16, 185, 129, 0.9);
+  color: white;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  backdrop-filter: blur(4px);
+}
+
+.completed-task-info {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.completed-task-info h4 {
+  margin: 0;
+  font-size: 1.1rem;
+}
+
+.tech-label {
+  margin: 0;
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+}
+
+.task-tags {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.tiny-tag {
+  background: var(--surface);
+  border: 1px solid var(--glass-border);
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-size: 0.7rem;
+  color: var(--text-muted);
 }

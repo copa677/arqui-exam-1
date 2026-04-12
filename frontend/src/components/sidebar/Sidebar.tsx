@@ -15,7 +15,7 @@ const Sidebar: React.FC = () => {
     <aside className="sidebar-container glass-card">
       <div className="sidebar-header">
         <div className="brand-badge">U</div>
-        <h3>Control Central</h3>
+        <h3>UAGRM Reportes</h3>
       </div>
       
       <nav className="sidebar-nav">
@@ -32,7 +32,7 @@ const Sidebar: React.FC = () => {
       </nav>
 
       <div className="sidebar-footer">
-        <p>© 2024 UAGRM Incidencias</p>
+        <p>© 2026 UAGRM Incidencias</p>
       </div>
     </aside>
   );

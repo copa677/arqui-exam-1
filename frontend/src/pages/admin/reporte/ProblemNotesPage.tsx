@@ -104,7 +104,6 @@ const ProblemNotesPage: React.FC = () => {
                           <th>Descripción</th>
                           <th>Tipo</th>
                           <th>Ambiente</th>
-                          <th>Evidencia</th>
                           <th>Estado</th>
                         </tr>
                       </thead>
@@ -120,14 +119,6 @@ const ProblemNotesPage: React.FC = () => {
                             <td className="cell-with-icon">
                               <MapPin size={14} /> 
                               {detail.ambiente ? `${detail.ambiente.nombre_ambiente} (Piso ${detail.ambiente.piso})` : 'Ubicación no disp.'}
-                            </td>
-                            <td className="evidence-cell">
-                              <img 
-                                src={`https://picsum.photos/seed/${detail.id}/80/80`} 
-                                alt="Evidencia adjunta" 
-                                className="evidence-thumb" 
-                                title="Ver pantalla completa"
-                              />
                             </td>
                             <td>
                               <span className={`status-pill ${(detail.estado_actual || 'Pendiente').toLowerCase()}`}>

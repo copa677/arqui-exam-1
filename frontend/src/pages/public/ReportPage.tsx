@@ -25,7 +25,7 @@ interface ProblemaLocal {
   tipo_incidencia_id: string;
   tipo_incidencia_desc: string;
   descripcion: string;
-  foto_nombre?: string;
+  descripcion: string;
 }
 
 const ReportPage: React.FC = () => {
@@ -57,8 +57,7 @@ const ReportPage: React.FC = () => {
     modulo_id: '',
     ambiente_id: '',
     tipo_incidencia_id: '',
-    descripcion: '',
-    fotoFile: null as File | null
+    descripcion: ''
   });
 
   useEffect(() => {
@@ -115,11 +114,6 @@ const ReportPage: React.FC = () => {
     setCurrentProblem(prev => ({ ...prev, [name]: value }));
   };
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      setCurrentProblem(prev => ({ ...prev, fotoFile: e.target.files![0] }));
-    }
-  };
 
   const addProblemToList = () => {
     if (!currentProblem.ambiente_id || !currentProblem.tipo_incidencia_id || !currentProblem.descripcion) return;
@@ -134,8 +128,7 @@ const ReportPage: React.FC = () => {
       ambiente_desc: `${ambiente?.nombre_ambiente || 'Ambiente'} (Módulo ${modulo?.numero_modulo || 'N/A'})`,
       tipo_incidencia_id: currentProblem.tipo_incidencia_id,
       tipo_incidencia_desc: tipo?.nombre_tipo || 'Problema',
-      descripcion: currentProblem.descripcion,
-      foto_nombre: currentProblem.fotoFile?.name
+      descripcion: currentProblem.descripcion
     };
 
     setProblemas([...problemas, nuevoProblema]);
@@ -144,8 +137,7 @@ const ReportPage: React.FC = () => {
     setCurrentProblem(prev => ({
       ...prev,
       tipo_incidencia_id: '',
-      descripcion: '',
-      fotoFile: null
+      descripcion: ''
     }));
   };
 
@@ -208,9 +200,6 @@ const ReportPage: React.FC = () => {
           <CheckCircle2 size={64} className="success-icon" />
           <h1>¡Lista de Reportes Enviada!</h1>
           <p>Gracias por ayudarnos a mejorar. Has reportado {problemas.length} incidencias.</p>
-          <div className="success-details">
-            <span>Ticket Maestro: #NOTA-{Math.floor(Math.random() * 9999)}</span>
-          </div>
           <button className="primary-button" onClick={() => navigate('/')}>
             Volver al Inicio
           </button>
@@ -367,21 +356,6 @@ const ReportPage: React.FC = () => {
                   />
                 </div>
 
-                <div className="form-group file-upload-group">
-                  <label>Evidencia Fotográfica (Opcional)</label>
-                  <div className="file-upload-wrapper">
-                    <input 
-                      type="file" 
-                      id="foto-upload" 
-                      accept="image/*"
-                      onChange={handleFileChange}
-                    />
-                    <label htmlFor="foto-upload" className="file-upload-button">
-                      <Camera size={18} />
-                      {currentProblem.fotoFile ? currentProblem.fotoFile.name : 'Adjuntar imagen'}
-                    </label>
-                  </div>
-                </div>
 
                 <button 
                   type="button" 
@@ -414,9 +388,6 @@ const ReportPage: React.FC = () => {
                         </div>
                         <p className="prob-location"><MapPin size={12}/> {prob.ambiente_desc}</p>
                         <p className="prob-desc">{prob.descripcion}</p>
-                        {prob.foto_nombre && (
-                          <p className="prob-photo"><Camera size={12}/> {prob.foto_nombre}</p>
-                        )}
                       </div>
                     ))}
                   </div>

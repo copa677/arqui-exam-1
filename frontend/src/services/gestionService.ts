@@ -27,8 +27,13 @@ export const gestionService = {
     const response = await api.get<Evidencia[]>('/evidencias');
     return response.data;
   },
-  createEvidencia: async (data: Partial<Evidencia>) => {
-    const response = await api.post<Evidencia>('/evidencias', data);
+  createEvidencia: async (formData: FormData) => {
+    // Al enviar FormData, axios establece automáticamente el Content-Type a multipart/form-data
+    const response = await api.post<Evidencia>('/evidencias', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    });
     return response.data;
   }
 };
