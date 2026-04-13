@@ -1,16 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { 
-  Send, 
-  MapPin, 
-  User, 
-  AlertTriangle, 
-  CheckCircle2, 
-  Loader2, 
+import {
+  Send,
+  MapPin,
+  User,
+  AlertTriangle,
+  CheckCircle2,
+  Loader2,
   ArrowLeft,
   Plus,
-  Trash2,
-  Camera
+  Trash2
 } from 'lucide-react';
 import { ubicacionService } from '../../services/ubicacionService';
 import { reporteService } from '../../services/reporteService';
@@ -24,7 +23,6 @@ interface ProblemaLocal {
   ambiente_desc: string;
   tipo_incidencia_id: string;
   tipo_incidencia_desc: string;
-  descripcion: string;
   descripcion: string;
 }
 
@@ -151,7 +149,7 @@ const ReportPage: React.FC = () => {
       alert("Debes agregar al menos un problema a la lista antes de enviar.");
       return;
     }
-    
+
     setLoading(true);
 
     try {
@@ -181,8 +179,6 @@ const ReportPage: React.FC = () => {
       });
 
       await Promise.all(detallesPromises);
-      
-      // La subida de fotos iría aquí cuando se conecte el microservicio en el futuro
 
       setSubmitted(true);
     } catch (err: any) {
@@ -232,41 +228,41 @@ const ReportPage: React.FC = () => {
             <div className="form-section animate-fade-in">
               <h3><User size={20} /> Datos Personales</h3>
               <p className="section-subtitle">Tus datos enlazan todos los reportes que envíes a continuación.</p>
-              
+
               <div className="form-row">
                 <div className="form-group half-width">
                   <label>Nombres</label>
-                  <input 
-                    type="text" 
-                    name="nombres" 
-                    required 
+                  <input
+                    type="text"
+                    name="nombres"
+                    required
                     placeholder="Ej. Juan Carlos"
                     value={personalData.nombres}
-                    onChange={handlePersonalChange} 
+                    onChange={handlePersonalChange}
                   />
                 </div>
                 <div className="form-group half-width">
                   <label>Apellidos</label>
-                  <input 
-                    type="text" 
-                    name="apellidos" 
-                    required 
+                  <input
+                    type="text"
+                    name="apellidos"
+                    required
                     placeholder="Ej. Pérez Silva"
                     value={personalData.apellidos}
-                    onChange={handlePersonalChange} 
+                    onChange={handlePersonalChange}
                   />
                 </div>
               </div>
 
               <div className="form-group">
                 <label>Correo Universitario / Personal</label>
-                <input 
-                  type="email" 
-                  name="correo" 
-                  required 
+                <input
+                  type="email"
+                  name="correo"
+                  required
                   placeholder="usuario@uagrm.edu.bo"
                   value={personalData.correo}
-                  onChange={handlePersonalChange} 
+                  onChange={handlePersonalChange}
                 />
               </div>
               <div className="form-group">
@@ -277,8 +273,8 @@ const ReportPage: React.FC = () => {
                   <option value="Administrativo">Personal Administrativo</option>
                 </select>
               </div>
-              <button 
-                type="button" 
+              <button
+                type="button"
                 className="primary-button full-width"
                 disabled={!personalData.nombres || !personalData.apellidos || !personalData.correo}
                 onClick={() => setStep(2)}
@@ -293,23 +289,23 @@ const ReportPage: React.FC = () => {
               {/* Lado Izquierdo: Formulario del Problema */}
               <div className="problem-form-panel">
                 <h3><MapPin size={20} /> Agregar Nueva Incidencia</h3>
-                
+
                 <div className="form-group">
                   <label>Ubicación General</label>
                   <div className="location-row">
-                    <select 
-                      name="facultad_id" 
-                      value={currentProblem.facultad_id} 
+                    <select
+                      name="facultad_id"
+                      value={currentProblem.facultad_id}
                       onChange={handleProblemChange}
                     >
                       <option value="">Facultad</option>
                       {facultades.map(f => <option key={f.id} value={f.id}>{f.abreviatura}</option>)}
                     </select>
-                    
-                    <select 
-                      name="modulo_id" 
+
+                    <select
+                      name="modulo_id"
                       disabled={!currentProblem.facultad_id}
-                      value={currentProblem.modulo_id} 
+                      value={currentProblem.modulo_id}
                       onChange={handleProblemChange}
                     >
                       <option value="">Módulo</option>
@@ -320,10 +316,10 @@ const ReportPage: React.FC = () => {
 
                 <div className="form-group">
                   <label>Ambiente Exacto</label>
-                  <select 
-                    name="ambiente_id" 
+                  <select
+                    name="ambiente_id"
                     disabled={!currentProblem.modulo_id}
-                    value={currentProblem.ambiente_id} 
+                    value={currentProblem.ambiente_id}
                     onChange={handleProblemChange}
                   >
                     <option value="">Selecciona Aula / Laboratorio</option>
@@ -335,9 +331,9 @@ const ReportPage: React.FC = () => {
 
                 <div className="form-group">
                   <label>Tipo de Daño</label>
-                  <select 
-                    name="tipo_incidencia_id" 
-                    value={currentProblem.tipo_incidencia_id} 
+                  <select
+                    name="tipo_incidencia_id"
+                    value={currentProblem.tipo_incidencia_id}
                     onChange={handleProblemChange}
                   >
                     <option value="">¿De qué trata?</option>
@@ -347,8 +343,8 @@ const ReportPage: React.FC = () => {
 
                 <div className="form-group">
                   <label>Descripción del desperfecto</label>
-                  <textarea 
-                    name="descripcion" 
+                  <textarea
+                    name="descripcion"
                     rows={3}
                     placeholder="Describe los detalles del problema de forma breve..."
                     value={currentProblem.descripcion}
@@ -357,8 +353,8 @@ const ReportPage: React.FC = () => {
                 </div>
 
 
-                <button 
-                  type="button" 
+                <button
+                  type="button"
                   className="secondary-button full-width add-btn"
                   disabled={!currentProblem.ambiente_id || !currentProblem.tipo_incidencia_id || !currentProblem.descripcion}
                   onClick={addProblemToList}
@@ -370,7 +366,7 @@ const ReportPage: React.FC = () => {
               {/* Lado Derecho: Lista de Problemas */}
               <div className="problems-list-panel">
                 <h3>Incidencias a Enviar ({problemas.length})</h3>
-                
+
                 {problemas.length === 0 ? (
                   <div className="empty-problems">
                     <AlertTriangle size={32} />
@@ -386,7 +382,7 @@ const ReportPage: React.FC = () => {
                             <Trash2 size={16} />
                           </button>
                         </div>
-                        <p className="prob-location"><MapPin size={12}/> {prob.ambiente_desc}</p>
+                        <p className="prob-location"><MapPin size={12} /> {prob.ambiente_desc}</p>
                         <p className="prob-desc">{prob.descripcion}</p>
                       </div>
                     ))}
@@ -397,9 +393,9 @@ const ReportPage: React.FC = () => {
                   <button type="button" className="link-button" onClick={() => setStep(1)} disabled={loading}>
                     Editar Datos Personales
                   </button>
-                  <button 
-                    type="submit" 
-                    className="primary-button submit-all-btn" 
+                  <button
+                    type="submit"
+                    className="primary-button submit-all-btn"
                     disabled={loading || problemas.length === 0}
                   >
                     {loading ? <Loader2 className="animate-spin" size={20} /> : <Send size={20} />}

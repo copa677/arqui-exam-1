@@ -108,7 +108,7 @@ const UsersPage: React.FC = () => {
                   <td>{user.correo}</td>
                   <td>
                     <span className="rol-badge">
-                      {user.rol_id === 1 ? 'Decano' : user.rol_id === 2 ? 'Mantenimiento' : 'Estudiante'}
+                      {user.rol_id === 1 ? 'Administrador' : user.rol_id === 2 ? 'Mantenimiento' : 'Estudiante'}
                     </span>
                   </td>
                   <td>
