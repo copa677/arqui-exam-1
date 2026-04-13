@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { 
-  ClipboardList, 
-  ChevronDown, 
-  ChevronUp, 
-  User, 
-  MapPin, 
-  Loader2, 
-  AlertCircle 
+import {
+  ClipboardList,
+  ChevronDown,
+  ChevronUp,
+  User,
+  MapPin,
+  Loader2,
+  AlertCircle
 } from 'lucide-react';
 import { reporteService } from '../../../services/reporteService';
 import type { NotaProblema } from '../../../types/reporte';
@@ -75,7 +75,7 @@ const ProblemNotesPage: React.FC = () => {
                     {note.detalles?.length || 0} Incidentes
                   </span>
                 </div>
-                
+
                 <div className="note-reporter-brief">
                   <User size={16} />
                   <span>{note.reportador?.nombres || ''} {note.reportador?.apellidos || 'Anónimo'}</span>
@@ -117,7 +117,7 @@ const ProblemNotesPage: React.FC = () => {
                               </span>
                             </td>
                             <td className="cell-with-icon">
-                              <MapPin size={14} /> 
+                              <MapPin size={14} />
                               {detail.ambiente ? `${detail.ambiente.nombre_ambiente} (Piso ${detail.ambiente.piso})` : 'Ubicación no disp.'}
                             </td>
                             <td>

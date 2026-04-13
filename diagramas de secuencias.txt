@@ -1,0 +1,467 @@
+@startuml
+title Caso de Uso: Inicio de Sesión (Admin / Encargado)
+autonumber
+
+actor "Administrador / Encargado" as User #LightSteelBlue
+participant "Frontend (LoginPage)" as FE
+participant "API Gateway (:3000)" as GW
+participant "MS Usuarios (:3001)" as MS
+database "DB Usuarios" as DB
+database "LocalStorage" as LS
+
+User -> FE : Ingresa Correo y Contraseña
+FE -> FE : Validar formato de datos
+
+FE -> GW : POST /api/login {correo, password}
+note right of GW : RUTA PÚBLICA\nNo requiere Token previo
+
+GW -> MS : proxy cURL to :3001/login
+MS -> DB : SELECT * FROM usuarios WHERE correo = ?
+DB --> MS : Datos (Hash Password, rol_id, info)
+
+MS -> MS : password_verify(password, hash)
+
+alt Autenticación Exitosa
+    MS -> MS : Generar JWT (Incluye rol_id)
+    MS --> GW : HTTP 201 {token, usuario}
+    GW --> FE : HTTP 201 {token, usuario}
+    
+    FE -> LS : setItem('token', JWT)
+    FE -> LS : setItem('user', data)
+    
+    alt Si rol_id == 1
+        FE -> FE : redirect('/admin/usuarios')
+        FE --> User : Muestra Panel Administrador
+    else Si rol_id == 2
+        FE -> FE : redirect('/tecnico')
+        FE --> User : Muestra Planilla de Trabajo
+    end
+    
+else Autenticación Fallida
+    MS --> GW : HTTP 401 {error: "No autorizado"}
+    GW --> FE : HTTP 401 {error}
+    FE --> User : Muestra "Credenciales Incorrectas"
+end
+@enduml
+
+' --------------------------------------------------------------------------
+
+@startuml
+title Caso de Uso: Cierre de Sesión (Cliente-Side)
+autonumber
+
+actor "Administrador / Encargado" as User
+participant "Frontend (Navbar/Sidebar)" as FE
+participant "authService" as AS
+database "LocalStorage (Browser)" as LS
+
+User -> FE : Clic en "Cerrar Sesión"
+
+FE -> AS : logout()
+
+note right of AS : No se requiere petición al\nAPI Gateway ni Microservicios\nporque el JWT es sin estado.
+
+AS -> LS : removeItem('token')
+AS -> LS : removeItem('user')
+
+LS --> AS : Confirmación
+
+AS --> FE : Éxito
+
+FE -> FE : redirect('/login')
+
+User <- FE : Muestra pantalla de Login
+@enduml
+
+' --------------------------------------------------------------------------
+
+@startuml
+title CU-03: Registro de los Reportadores de Problemas
+autonumber
+
+actor "Reportador de Problemas" as Rep #Yellow
+participant "Frontend (ReportPage)" as FE
+participant "API Gateway (:3000)" as GW
+participant "MS Reporte Problemas (:3003)" as MS
+database "DB Reportes" as DB
+
+Rep -> FE : Ingresa nombres, apellidos, correo y tipo
+FE -> FE : Validar campos obligatorios
+
+FE -> GW : POST /api/reportadores {datos_persona}
+note right of GW : RUTA PÚBLICA\nCualquier usuario puede reportar
+
+GW -> MS : proxy cURL to :3003/reportadores
+MS -> MS : ReportadorController@create()
+
+alt El reporteador ya existe (por Correo)
+    MS -> DB : UPDATE reportadores WHERE correo = ?
+    DB --> MS : Registro actualizado
+else Es un reporteador nuevo
+    MS -> DB : INSERT INTO reportadores
+    DB --> MS : Registro creado (ID: 5)
+end
+
+MS --> GW : HTTP 201 {reportador_id: 5, ...}
+GW --> FE : HTTP 201 {reportador_id: 5, ...}
+
+FE -> FE : Guarda ID_Reportador en estado local\npara vincular con la Nota de Problema
+FE --> Rep : Habilita paso siguiente (Ubicación/Daños)
+@enduml
+
+' --------------------------------------------------------------------------
+
+@startuml
+title CU-04: Gestión de Usuarios (CRUD Completo)
+autonumber
+
+actor "Administrador" as Admin #LightSteelBlue
+participant "Frontend (UsersPage)" as FE
+participant "API Gateway (:3000)" as GW
+participant "MS Usuarios (:3001)" as MS
+database "DB Usuarios" as DB
+
+== Operación: Listar Usuarios ==
+Admin -> FE : Accede a Gestión de Usuarios
+FE -> GW : GET /api/usuarios
+note right of GW : Valida JWT Administrador
+GW -> MS : Proxy cURL to :3001
+MS -> DB : SELECT * FROM usuarios WHERE activo = true
+DB --> MS : Lista de usuarios
+MS --> FE : HTTP 200 {usuarios: [...]}
+FE --> Admin : Muestra tabla de usuarios
+
+== Operación: Crear Usuario ==
+Admin -> FE : Click en "Nuevo" y envía datos
+FE -> GW : POST /api/usuarios {datos}
+GW -> MS : Proxy cURL to :3001/usuarios
+MS -> DB : INSERT INTO usuarios (con hash de clave)
+DB --> MS : Creado
+MS --> FE : HTTP 201 {usuario}
+
+== Operación: Actualizar Usuario ==
+Admin -> FE : Click en "Editar" y guarda cambios
+FE -> GW : PUT /api/usuarios/{id} {datos_modificados}
+GW -> MS : Proxy cURL to :3001/usuarios/{id}
+MS -> DB : UPDATE usuarios SET ... WHERE id = ?
+DB --> MS : Actualizado
+MS --> FE : HTTP 200 {usuario_editado}
+
+== Operación: Eliminar (Desactivar) Usuario ==
+Admin -> FE : Click en "Eliminar"
+FE -> GW : DELETE /api/usuarios/{id}
+GW -> MS : Proxy cURL to :3001/usuarios/{id}
+MS -> DB : UPDATE usuarios SET activo = false WHERE id = ?
+DB --> MS : Desactivado
+MS --> FE : HTTP 200 {message: "Registro desactivado"}
+
+FE -> FE : Refresca tabla de usuarios
+@enduml
+
+' --------------------------------------------------------------------------
+
+@startuml
+title CU-05: Gestionar Estructura Física (Módulos / Ambientes)
+autonumber
+
+actor "Administrador" as Admin #LightSteelBlue
+participant "Frontend (LocationsPage)" as FE
+participant "API Gateway (:3000)" as GW
+participant "MS Ubicación (:3002)" as MS
+database "DB Ubicación" as DB
+
+== Operación: Consultar Estructura (Módulos / Ambientes) ==
+Admin -> FE : Abre Gestión de Estructura Física
+FE -> GW : GET /api/modulos?with=ambientes
+note right of GW : Valida JWT Administrador
+GW -> MS : Proxy cURL to :3002
+MS -> DB : SELECT * FROM modulos ...
+DB --> MS : Lista de Módulos y sus Ambientes
+MS --> FE : HTTP 200 {modulos: [...]}
+FE --> Admin : Muestra lista de Módulos y Ambientes
+
+== Operación: Crear / Editar Módulo o Ambiente ==
+Admin -> FE : Envía datos de Módulo o Ambiente
+FE -> GW : POST o PUT /api/[modulo|ambiente]
+GW -> MS : Proxy cURL to :3002
+MS -> DB : INSERT / UPDATE
+DB --> MS : Guardado
+MS --> FE : HTTP 21/200 OK
+
+== Operación: Eliminar (Baja Lógica) ==
+Admin -> FE : Click en eliminar Módulo/Ambiente
+FE -> GW : DELETE /api/[modulo|ambiente]/{id}
+GW -> MS : Proxy cURL to :3002
+MS -> DB : UPDATE [modulo|ambiente] SET activo = false
+DB --> MS : Desactivado
+MS --> FE : HTTP 200 OK
+
+FE -> FE : Actualiza lista de estructura física
+@enduml
+
+' --------------------------------------------------------------------------
+
+@startuml
+title CU-06: Registro de Notas de Problemas (Ticket Maestro)
+autonumber
+
+actor "Reportador de Problemas" as Rep #Yellow
+participant "Frontend (ReportPage)" as FE
+participant "API Gateway (:3000)" as GW
+participant "MS Reporte Problemas (:3003)" as MS
+database "DB Reportes" as DB
+
+Note over Rep, FE : El usuario ya completó sus datos (CU-03)\ny tiene un reportador_id
+
+Rep -> FE : Confirma ubicación y descripción de problemas
+FE -> GW : POST /api/notas {reportador_id: 5}
+note right of GW : RUTA PÚBLICA
+
+GW -> MS : proxy cURL to :3003/notas
+MS -> DB : INSERT INTO nota_problemas
+DB --> MS : return ID_Nota: 100
+MS --> GW : return JSON {id: 100}
+GW --> FE : return JSON {id: 100}
+
+loop Por cada problema en la lista del formulario
+    FE -> GW : POST /api/detalles {nota_id: 100, ambiente_id, tipo_incidencia_id, descripcion}
+    GW -> MS : proxy cURL to :3003/detalles
+    MS -> DB : INSERT INTO detalle_problema (estado: 'Pendiente')
+    DB --> MS : Creado
+end
+
+FE --> Rep : Muestra Ticket de Confirmación y agradecimiento
+@enduml
+
+' --------------------------------------------------------------------------
+
+@startuml
+title CU-07: Gestionar Facultades (CRUD Detallado)
+autonumber
+
+actor "Administrador" as Admin #LightSteelBlue
+participant "Frontend (FacultadModal)" as FE
+participant "API Gateway (:3000)" as GW
+participant "MS Ubicación (:3002)" as MS
+database "DB Ubicación" as DB
+
+== Operación: Cargar Listado ==
+Admin -> FE : Abre sección Facultades
+FE -> GW : GET /api/facultades
+GW -> MS : proxy cURL to :3002/facultades
+MS -> DB : SELECT id, nombre, abreviatura FROM facultades WHERE activo = true
+DB --> MS : Data rows
+MS --> FE : HTTP 200 [ {id, nombre, abreviatura}, ... ]
+FE --> Admin : Despliega tabla de facultades
+
+== Operación: Crear Nueva Facultad ==
+Admin -> FE : Ingresa Nombre y Abreviatura
+FE -> GW : POST /api/facultades {nombre, abreviatura}
+note right of GW : Valida JWT Administrador
+GW -> MS : proxy cURL to :3002/facultades
+MS -> DB : INSERT INTO facultades (nombre, abreviatura, activo=true)
+DB --> MS : return success + ID
+MS --> FE : HTTP 201 {id, nombre, abreviatura}
+
+== Operación: Actualizar Facultad ==
+Admin -> FE : Modifica datos en el modal
+FE -> GW : PUT /api/facultades/{id} {nombre, abreviatura}
+GW -> MS : proxy cURL to :3002/facultades/{id}
+MS -> DB : UPDATE facultades SET nombre=?, abreviatura=? WHERE id=?
+DB --> MS : Row Updated
+MS --> FE : HTTP 200 {id, nombre, abreviatura}
+
+== Operación: Eliminar Facultad (Baja Lógica) ==
+Admin -> FE : Click en confirmar eliminación
+FE -> GW : DELETE /api/facultades/{id}
+GW -> MS : proxy cURL to :3002/facultades/{id}
+MS -> DB : UPDATE facultades SET activo = false WHERE id = ?
+DB --> MS : Boolean Success
+MS --> FE : HTTP 200 {message: "Registro desactivado"}
+
+FE -> FE : Re-ejecuta Operación: Cargar Listado
+@enduml
+
+' --------------------------------------------------------------------------
+
+@startuml
+title CU-08: Registro de Evidencia (Subida de Fotografía)
+autonumber
+
+actor "Encargado de Mantenimiento" as Tec #LightGreen
+participant "Frontend (EncargadoPage)" as FE
+participant "API Gateway (:3000)" as GW
+participant "MS Gestión Evidencia (:3004)" as MS
+database "DB Gestión" as DB
+entity "Sistema de Archivos" as Storage
+
+note over Tec, FE : El técnico está finalizando\nuna tarea "En Proceso"
+
+Tec -> FE : Selecciona archivo de imagen (Camera/File)
+FE -> FE : Valida presencia del archivo y asignacion_id
+
+FE -> GW : POST /api/evidencias (FormData)
+note right of GW : RUTA PROTEGIDA (JWT Técnico)\nManeja multipart/form-data
+
+GW -> MS : proxy cURL with CURLFile to :3004
+MS -> MS : EvidenciaController@create()
+
+MS -> Storage : move_uploaded_file(tmp, /public/evidencia/xxx.jpg)
+Storage --> MS : Guardado exitoso
+
+MS -> DB : INSERT INTO evidencia (url, momento, asignacion_id)
+DB --> MS : Registro guardado (ID: 500)
+
+MS --> GW : HTTP 201 {id: 500, url_archivo: "..."}
+GW --> FE : HTTP 201 {id: 500, url_archivo: "..."}
+
+FE --> Tec : Muestra confirmación de evidencia cargada
+@enduml
+
+' --------------------------------------------------------------------------
+
+@startuml
+title CU-09: Asignación de Problema (Delegación a Técnico)
+autonumber
+
+actor "Administrador" as Admin #LightSteelBlue
+participant "Frontend (AssignmentsPage)" as FE
+participant "API Gateway (:3000)" as GW
+participant "MS Gestión (:3004)" as MSG
+participant "MS Reporte Problemas (:3003)" as MSR
+database "DB Gestión" as DBG
+database "DB Reportes" as DBR
+
+Admin -> FE : Selecciona Problema y Técnico
+FE -> FE : Prepara datos de asignación
+
+== Paso 1: Crear Vínculo de Asignación ==
+FE -> GW : POST /api/asignaciones {detalle_id, usuario_id}
+note right of GW : Valida JWT Administrador
+GW -> MSG : proxy cURL to :3004/asignaciones
+MSG -> DBG : INSERT INTO asignacion (detalle_id, usuario_id, activo=true)
+DBG --> MSG : return ID_Asignacion: 50
+MSG --> GW : HTTP 201 {id: 50}
+GW --> FE : HTTP 201 {id: 50}
+
+== Paso 2: Registrar en Historial ==
+FE -> GW : POST /api/historial {asignacion_id: 50, estado: 'Asignado'}
+GW -> MSG : proxy cURL to :3004/historial
+MSG -> DBG : INSERT INTO historial_estados
+DBG --> MSG : OK
+MSG --> FE : HTTP 201 OK
+
+== Paso 3: Actualizar Estado del Problema ==
+FE -> GW : PUT /api/detalles/{id} {estado_actual: 'Asignado'}
+GW -> MSR : proxy cURL to :3003/detalles/{id}
+MSR -> DBR : UPDATE detalle_problema SET estado_actual = 'Asignado'
+DBR --> MSR : OK
+MSR --> FE : HTTP 200 OK
+
+FE --> Admin : Muestra mensaje "Tarea Asignada Exitosamente"
+FE -> FE : Filtra el problema de la lista de pendientes
+@enduml
+
+' --------------------------------------------------------------------------
+
+@startuml
+title CU-10: Visualizar Problemas (Panel de Auditoría)
+autonumber
+
+actor "Administrador" as Admin #LightSteelBlue
+participant "Frontend (ProblemNotesPage)" as FE
+participant "API Gateway (:3000)" as GW
+participant "MS Reporte Problemas (:3003)" as MSR
+participant "MS Ubicación (:3002)" as MSU
+database "DB Reportes" as DBR
+database "DB Ubicación" as DBU
+
+Admin -> FE : Accede a "Reportes Recibidos"
+
+== Carga de Información Maestro-Detalle ==
+FE -> GW : GET /api/notas?with=detalles,reportador
+note right of GW : Valida JWT Administrador
+GW -> MSR : proxy cURL to :3003
+MSR -> DBR : SELECT * FROM notas_problema (Eager Load)
+DBR --> MSR : Datos con Reportador y sus Detalles
+MSR --> GW : HTTP 200 {notas: [...]}
+GW --> FE : JSON con toda la estructura
+
+== Cruce de Información de Ubicaciones ==
+FE -> GW : GET /api/ambientes
+GW -> MSU : proxy cURL to :3002
+MSU -> DBU : SELECT * FROM ambientes
+DBU --> MSU : Lista de aulas y oficinas
+MSU --> FE : HTTP 200 {ambientes: [...]}
+
+FE -> FE : Cruza Ambiente_ID del reporte con\nNombre del Ambiente de la lista
+FE --> Admin : Muestra tabla detallada de incidencias
+@enduml
+
+' --------------------------------------------------------------------------
+
+@startuml
+title CU-11: Finalizar Mantenimiento (Cierre de Tarea)
+autonumber
+
+actor "Encargado de Mantenimiento" as Tec #LightGreen
+participant "Frontend (EncargadoPage)" as FE
+participant "API Gateway (:3000)" as GW
+participant "MS Gestión (:3004)" as MSG
+participant "MS Reporte Problemas (:3003)" as MSR
+database "DB Gestión" as DBG
+database "DB Reportes" as DBR
+entity "Sistema de Archivos" as Storage
+
+Tec -> FE : Adjunta Foto y pulsa "Confirmar y Finalizar"
+
+== Paso 1: Registro de Evidencia Fotográfica ==
+FE -> GW : POST /api/evidencias (FormData)
+GW -> MSG : Proxy cURL (Multipart) to :3004
+MSG -> Storage : Guarda archivo .jpg
+MSG -> DBG : INSERT INTO evidencia
+DBG --> MSG : OK
+MSG --> FE : HTTP 201 OK
+
+== Paso 2: Registrar Hito de Finalización ==
+FE -> GW : POST /api/historial {asignacion_id, estado: 'Finalizado'}
+GW -> MSG : Proxy cURL to :3004/historial
+MSG -> DBG : INSERT INTO historial_estados (estado: 'Finalizado')
+DBG --> MSG : OK
+MSG --> FE : HTTP 201 OK
+
+== Paso 3: Cambio de Estado Maestro ==
+FE -> GW : PUT /api/detalles/{id} {estado_actual: 'Finalizado'}
+GW -> MSR : Proxy cURL to :3003/detalles/{id}
+MSR -> DBR : UPDATE detalle_problema SET estado_actual = 'Finalizado'
+DBR --> MSR : OK
+MSR --> FE : HTTP 200 OK
+
+FE --> Tec : Muestra "Labor Completa" y actualiza planilla
+@enduml
+
+' --------------------------------------------------------------------------
+
+@startuml
+title CU-12: Consulta de Historial (Línea de Tiempo)
+autonumber
+
+actor "Administrador / Técnico" as User
+participant "Frontend (Vista Detalle)" as FE
+participant "API Gateway (:3000)" as GW
+participant "MS Gestión (:3004)" as MS
+database "DB Gestión" as DB
+
+User -> FE : Desea ver la trazabilidad de una asignación
+FE -> GW : GET /api/historial?asignacion_id=50
+note right of GW : Valida JWT del Usuario
+
+GW -> MS : proxy cURL to :3004/historial
+MS -> DB : SELECT * FROM historial_estados WHERE asignacion_id = 50
+DB --> MS : Lista de hitos (Asignado, En Proceso, Finalizado)
+MS --> GW : HTTP 200 {historial: [...]}
+GW --> FE : HTTP 200 {historial: [...]}
+
+FE -> FE : Ordena hitos cronológicamente
+FE --> User : Muestra línea de tiempo del mantenimiento
+@enduml

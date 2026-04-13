@@ -20,6 +20,7 @@ CREATE TABLE IF NOT EXISTS "usuarios" (
     "activo" BOOLEAN DEFAULT TRUE
 );
 
+-- MS UBICAION
 -- Tabla: facultad
 CREATE TABLE IF NOT EXISTS "facultad" (
     "id" SERIAL PRIMARY KEY,

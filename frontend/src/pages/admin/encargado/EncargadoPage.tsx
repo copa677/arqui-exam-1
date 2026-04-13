@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { Play, CheckCircle2, AlertTriangle, Clock, MapPin, Camera, Loader2, Upload } from 'lucide-react';
+import { Play, CheckCircle2, Clock, MapPin, Camera, Loader2, Upload } from 'lucide-react';
 import { reporteService } from '../../../services/reporteService';
 import { gestionService } from '../../../services/gestionService';
 import type { DetalleProblema, NotaProblema } from '../../../types/reporte';
-import type { Asignacion } from '../../../types/gestion';
 import './EncargadoPage.css';
 
 interface AssignedTask extends DetalleProblema {
@@ -15,7 +14,7 @@ const EncargadoPage: React.FC = () => {
   const [tasks, setTasks] = useState<AssignedTask[]>([]);
   const [loading, setLoading] = useState(true);
   const [actionLoading, setActionLoading] = useState<number | null>(null);
-  
+
   // Para la subida de fotos
   const [selectedTaskForPhoto, setSelectedTaskForPhoto] = useState<number | null>(null);
   const [photoFile, setPhotoFile] = useState<File | null>(null);
@@ -180,8 +179,8 @@ const EncargadoPage: React.FC = () => {
       <div className="tasks-grid">
         {tasks.length === 0 ? (
           <div className="empty-state glass-card" style={{ gridColumn: '1 / -1' }}>
-             <CheckCircle2 size={48} />
-             <p>No tienes tareas asignadas actualmente. ¡Disfruta tu descanso!</p>
+            <CheckCircle2 size={48} />
+            <p>No tienes tareas asignadas actualmente. ¡Disfruta tu descanso!</p>
           </div>
         ) : (
           tasks.map(task => (
@@ -195,9 +194,9 @@ const EncargadoPage: React.FC = () => {
                   {task.estado_actual}
                 </span>
               </div>
-              
+
               <h3>{task.descripcion}</h3>
-              
+
               <div className="task-meta">
                 <MapPin size={16} />
                 <span>
@@ -208,12 +207,12 @@ const EncargadoPage: React.FC = () => {
               <div className="task-actions">
                 {/* BOTON DE INICIAR */}
                 {(task.estado_actual === 'Asignado' || task.estado_actual === 'Pendiente') && (
-                  <button 
-                    className="action-btn start-btn" 
+                  <button
+                    className="action-btn start-btn"
                     onClick={() => startTask(task)}
                     disabled={actionLoading === task.id}
                   >
-                    {actionLoading === task.id ? <Loader2 size={16} className="animate-spin" /> : <Play size={16} />} 
+                    {actionLoading === task.id ? <Loader2 size={16} className="animate-spin" /> : <Play size={16} />}
                     Iniciar Reparación
                   </button>
                 )}
@@ -227,9 +226,9 @@ const EncargadoPage: React.FC = () => {
                           <Camera size={16} />
                           {photoFile ? photoFile.name : 'Escoger Fotografía'}
                         </label>
-                        <input 
-                          type="file" 
-                          id={`photo-upload-${task.id}`} 
+                        <input
+                          type="file"
+                          id={`photo-upload-${task.id}`}
                           accept="image/*"
                           style={{ display: 'none' }}
                           onChange={(e) => {
@@ -238,15 +237,15 @@ const EncargadoPage: React.FC = () => {
                             }
                           }}
                         />
-                        
+
                         <div className="evidence-actions">
                           <button className="cancel-evidence" onClick={() => {
                             setSelectedTaskForPhoto(null);
                             setPhotoFile(null);
                           }}>Cancelar</button>
-                          
-                          <button 
-                            className="action-btn finish-btn" 
+
+                          <button
+                            className="action-btn finish-btn"
                             onClick={() => finishTask(task)}
                             disabled={!photoFile || actionLoading === task.id}
                           >
@@ -256,8 +255,8 @@ const EncargadoPage: React.FC = () => {
                         </div>
                       </div>
                     ) : (
-                      <button 
-                        className="action-btn finish-btn" 
+                      <button
+                        className="action-btn finish-btn"
                         onClick={() => setSelectedTaskForPhoto(task.id!)}
                       >
                         <CheckCircle2 size={16} /> Completar Tarea
@@ -265,7 +264,7 @@ const EncargadoPage: React.FC = () => {
                     )}
                   </div>
                 )}
-                
+
                 {/* ESTADO FINALIZADO */}
                 {task.estado_actual === 'Finalizado' && (
                   <div className="completed-msg">
