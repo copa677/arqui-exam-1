@@ -89,7 +89,7 @@ if (!$isPublic) {
     AuthMiddleware::handle();
 }
 
-// Función para reenviar la petición (Proxy) mejorada
+// Función para reenviar la petición (Proxy) 
 function proxyRequest($url, $method, $data = null) {
     $ch = curl_init($url);
     
